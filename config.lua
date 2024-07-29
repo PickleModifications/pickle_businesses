@@ -31,22 +31,8 @@ Config.BusinessAdministration = {
 
 Config.BusinessSettings = {
     sellScale = 0.5, -- The multiplier to give back to the player when selling a business to the "state".
-    ownerRole = { -- This is the highest-ranking role, and is only assignable to the business owner. This role automatically has the highest permissions.
-        label = "CEO", -- The label of the owner role.
-        salary = 0, -- The salary of the owner role.
-        commission = 10, -- The commission percentage (0-100%) the owner gets from sales.
-    },
-    employeeRole = { -- This is the lowest-ranking role, and is assignable to employees. This role has no permissions, and can be removed if there is more than one role assignable to employees.
-        label = "Employee", -- The label of the employee role.
-        salary = 100, -- The salary of the employee role.
-        commission = 5, -- The commission percentage (0-100%) the employee gets from sales.
-    },
-    recentSalesCapacity = 3, -- How many recent sales to store.
-    recentTradesCapacity = 20, -- How many recent trades to store.
-}
-
-Config.LocationSettings = {
     maxLocations = 75, -- The maximum amount of locations a business can have.
+    recentSalesCapacity = 3, -- How many recent sales to store.
 }
 
 Config.WebhookEvents = {

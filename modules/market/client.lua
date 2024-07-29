@@ -36,6 +36,7 @@ function OpenBusinessStore(key)
                     language = Language[Config.Language],
                     img_folder = Config.ItemImageFolder
                 },
+                acceptsDirtyCash = DoesZoneAcceptDirtyCash(business.zone),
                 admin = admin,
                 label = business.label or "Untitled Business",
                 money = business.money or 0,

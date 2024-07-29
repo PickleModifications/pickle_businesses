@@ -2,6 +2,8 @@ RegisterNetEvent("pickle_businesses:purchaseSupply", function(businessId, supply
     local source = source
     local business = Businesses[businessId]
     if not business then return end
+    local employee = GetBusinessEmployee(source, businessId)
+    if not employee then return false end
     if method ~= "cash" and method ~= "card" then return end
     if not quantity or quantity < 1 then return end
     local zoneName = business.zone

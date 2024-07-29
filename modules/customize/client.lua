@@ -714,7 +714,6 @@ function Customize_RefreshLocationProps(excludeArray)
         local location = currentCustomize.locations[i]
         local check = true
         for j=1, #excludeArray do 
-            print(location.id, excludeArray[j])
             if location.id == excludeArray[j] then
                 check = false
                 break
@@ -969,7 +968,7 @@ function Customize_OpenBusinessMenu(data, cb)
     
 
     if currentCustomize.admin then
-        local businessZones = Customize_GetBusinessZones(true)
+        local businessZones = GetBusinessZones(true)
         currentCustomize.zone = currentCustomize.zone or (Config.BusinessZones[1] and Config.BusinessZones[1].name or nil)
         if currentCustomize.zone == nil then
             print("^1ERROR INCOMING, NEED TO ADD ZONES IN THE CONFIG!^0")
@@ -992,7 +991,7 @@ function Customize_OpenBusinessMenu(data, cb)
         position = Config.MenuPosition,
         onSideScroll = function(selected, scrollIndex, args)
             if options[selected].pbOptionType == "zone" then
-                local businessZones = Customize_GetBusinessZones()
+                local businessZones = GetBusinessZones()
                 local zoneData = businessZones[scrollIndex]
                 currentCustomize.zone = zoneData.name
                 local newLocations = {}

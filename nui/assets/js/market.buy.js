@@ -90,7 +90,7 @@ MarketBuy.DisplayMenu = function(data) {
                     <select value="cash" class="payment-method">
                         <option value="cash">${_L("market_cash")}</option>
                         <option value="card">${_L("market_card")}</option>
-                        <option value="dirtycash">${_L("market_dirtycash")}</option>
+                        ${Market.data.acceptsDirtyCash ? `<option value="dirtycash">${_L("market_dirtycash")} </option>` : ""}
                     </select>
                 </div>
             </div>

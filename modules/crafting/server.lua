@@ -64,7 +64,6 @@ function IsCraftingInProgress(businessId, locationId)
     return false
 end
 
-
 lib.callback.register("pickle_businesses:isCraftingActive", function(source, businessId, locationId)
     return IsCraftingInProgress(businessId, locationId)
 end)
@@ -81,6 +80,8 @@ lib.callback.register("pickle_businesses:startCrafting", function(source, busine
     local business = Businesses[businessId]
     local _, location = GetBusinessLocation(businessId, locationId)
     if not business or not location then return ShowNotification(source, _L("business_not_found")) end
+    local employee = GetBusinessEmployee(source, businessId)
+    if not employee then return false end
     local craftingData = GetCraftingData(business.zone, location.craftingType)
     if not craftingData then return ShowNotification(source, _L("business_crafting_not_found")) end
     local craftableItem = craftingData.craftableItems[craftableId]
@@ -123,6 +124,8 @@ RegisterNetEvent("pickle_businesses:finishCrafting", function()
     local business = Businesses[businessId]
     local _, location = GetBusinessLocation(businessId, locationId)
     if not business or not location then return ShowNotification(source, _L("business_not_found")) end
+    local employee = GetBusinessEmployee(source, businessId)
+    if not employee then return false end
     local craftingData = GetCraftingData(business.zone, location.craftingType)
     if not craftingData then return ShowNotification(source, _L("business_crafting_not_found")) end
     local craftableItem = craftingData.craftableItems[craftableId]
