@@ -42,15 +42,26 @@ function CreateBusiness(businessData)
         ["@roles"] = json.encode(businessData.roles)
     }, function(id)
         businessData.id = id
+        local locations = businessData.game_info.locations
+        if locations then
+            for i=1, #locations do 
+                if locations[i].type == "storage" then
+                    locations[i].storageId = GenerateBusinessStorageId("business_"..id, locations)
+                end
+            end
+            businessData.game_info.locations = locations
+            MySQL.Async.execute("UPDATE pickle_businesses_locations SET game_info = @game_info WHERE id = @id;", {
+                ["@game_info"] = json.encode(businessData.game_info),
+                ["@id"] = id
+            }, function(rowsChanged)
+            end)
+        end
         InitializeBusiness(businessData, dontSync)
     end)
 end
 
 function InitializeBusiness(data, dontSync)
-    local index
-    repeat
-        index = "business_"..data.id
-    until not Businesses[index]
+    local index = "business_"..data.id
     Businesses[index] = {
         id = data.id,
         owner = data.owner or nil,
@@ -144,11 +155,11 @@ function GetBusinessEmployee(target, businessId)
     end
 end
 
-function GenerateBusinessStorageId(locations)
-    local id = "pb_storage_" .. math.random(1, 999999)
+function GenerateBusinessStorageId(businessId, locations)
+    local id = "pb_" .. businessId .. "_storage_".. math.random(1, 999999)
     for i=1, #locations do
         if locations[i].storageId and locations[i].storageId == id then
-            return GenerateBusinessStorageId(locations)
+            return GenerateBusinessStorageId(businessId, locations)
         end
     end
     return id
@@ -990,10 +1001,11 @@ end
 function RemoveStoreEmployee(businessId, identifier)
     if not Businesses[businessId].employees[identifier] then return end
     if Businesses[businessId].owner == identifier then return end
+    local name = Businesses[businessId].employees[identifier].name
     Businesses[businessId].employees[identifier] = nil
     SendBusinessWebhook(businessId, "business", {
         type = "fire_employee",
-        employee = Businesses[businessId].employees[identifier].name,
+        employee = name,
         timestamp = GetDateTime()
     })
     UpdateStoreEmployeesSQL(businessId)
@@ -1029,6 +1041,44 @@ function SaveStoreSettings(businessId, settings)
     end
     UpdateSettingsSQL(businessId)
     TriggerClientEvent("pickle_businesses:updateBusinessSettings", -1, businessId, { label = Businesses[businessId].label, game_info = Businesses[businessId].game_info })
+end
+
+function UpdateStoreWipeSQL(businessId)
+    local business = Businesses[businessId]
+    if not business then return end
+    MySQL.Async.execute("UPDATE pickle_businesses_locations SET owner = @owner, label = @label, roles = @roles, employees = @employees, trade_listings = @trade_listings, daily_sales = @daily_sales, recent_sales = @recent_sales, recent_trades = @recent_trades, game_info = @game_info WHERE id = @id;", {
+        ["@owner"] = business.owner,
+        ["@label"] = business.label,
+        ["@roles"] = json.encode(business.roles),
+        ["@employees"] = json.encode(business.employees),
+        ["@trade_listings"] = json.encode(business.trade_listings),
+        ["@daily_sales"] = json.encode(business.daily_sales),
+        ["@recent_sales"] = json.encode(business.recent_sales),
+        ["@recent_trades"] = json.encode(business.recent_trades),
+        ["@game_info"] = json.encode(business.game_info),
+        ["@id"] = business.id
+    }, function(rowsChanged)
+    end)
+end
+
+function StoreWipe(businessId)
+    local business = Businesses[businessId]
+    if not business then return end
+    Businesses[businessId].owner = nil
+    Businesses[businessId].label = "Untitled Business"
+    Businesses[businessId].roles = {}
+    Businesses[businessId].employees = {}
+    Businesses[businessId].trade_listings = {}
+    Businesses[businessId].daily_sales = {}
+    Businesses[businessId].recent_sales = {}
+    Businesses[businessId].recent_trades = {}
+    if business.game_info.webhooks then
+        business.game_info.webhooks.business = ""
+        business.game_info.webhooks.purchase = ""
+        business.game_info.webhooks.trade = ""
+    end
+    UpdateStoreWipeSQL(businessId)
+    TriggerClientEvent("pickle_businesses:updateBusiness", -1, businessId, Businesses[businessId])
 end
 
 RegisterNetEvent("pickle_businesses:initializePlayer", function()
@@ -1090,16 +1140,33 @@ RegisterNetEvent("pickle_businesses:purchaseBusiness", function(businessId, purc
     Businesses[businessId].renting = (purchaseType == "rent")
     UpdateStoreOwnerSQL(businessId)
     BusinessCallback("postOwner", source, businessId, purchaseType, cost)
-    ShowNotification(source, _L("business_"..purchaseType.."_success", cost))
+    ShowNotification(source, _L("business_"..purchaseType.."_success", NumberWithCommas(cost)))
     TriggerClientEvent("pickle_businesses:updateBusinessOwner", -1, businessId, { owner = Businesses[businessId].owner, roles = Businesses[businessId].roles, employees = Businesses[businessId].employees, renting = Businesses[businessId].renting })
 end)
 
 RegisterNetEvent("pickle_businesses:endLease", function(businessId)
-    print("END LEASE")
+    local source = source
+    local business = Businesses[businessId]
+    if not business or (business.owner ~= GetIdentifier(source) and not CanAdministrateBusinesses(source)) or not business.renting then return ShowNotification(source, _L("business_end_lease_fail")) end
+    ShowNotification(source, _L("business_end_lease_success"))
+    StoreWipe(businessId)
 end)
 
 RegisterNetEvent("pickle_businesses:sellBusiness", function(businessId)
-    print("SELL BUSINESS")
+    local source = source
+    local business = Businesses[businessId]
+    if not business or (business.owner ~= GetIdentifier(source) and not CanAdministrateBusinesses(source)) or business.renting then return ShowNotification(source, _L("business_sell_fail")) end
+    local price = business.price or 0
+    local refund = math.floor(price * Config.BusinessSettings.sellScale)
+    if refund > 0 then
+        AddPaymentMethodAmount(source, "cash", refund)
+    end
+    ShowNotification(source, _L("business_sell_success", NumberWithCommas(refund)))
+    StoreWipe(businessId)
+end)
+
+RegisterNetEvent("pickle_businesses:transferBusiness", function(businessId, target)
+    print("TRANSFER BUSINESS", businessId, target)
 end)
 
 lib.callback.register("pickle_businesses:getInventory", function(source)

@@ -48,11 +48,6 @@ function Customize_CreateBusiness(source, data)
             return
         end
     end
-    for i=1, #data.locations do 
-        if data.locations[i].type == "storage" then
-            data.locations[i].storageId = GenerateBusinessStorageId(data.locations)
-        end
-    end
 
     local businessData = {
         price = data.price or 0,

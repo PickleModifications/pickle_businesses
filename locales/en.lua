@@ -176,8 +176,12 @@ Language["en"] = {
     customize_locations_none_set = "You must set at least one management location for interaction.",
     customize_transfer_ownership = "Business Actions",
     customize_transfer_transfer = "Transfer Business",
+    customize_transfer_target = "Select New Owner",
+    customize_transfer_transfer_confirm = "Are you sure you want to transfer the business to %s?",
     end_lease = "End Lease",
     end_lease_confirm = "Are you sure you want to end the lease? \n\nThis will erase all employees and items.",
+    business_end_lease_fail = "You cannot end the lease of this business.",
+    business_end_lease_success = "You have successfully ended the lease of this business.",
     customize_transfer_sell = "Sell Business (%s)",
     customize_transfer_sell_confirm = "Are you sure you want to sell the business for %s? \n\nThis will erase all employees and items.",
     arrow_adjust = "Left and Right Arrow to Adjust",
@@ -189,6 +193,7 @@ Language["en"] = {
     business_interact_crafting = "Crafting",
     business_interact_billing = "Billing",
     business_interact_market = "Market",
+    business_storage_no_permission = "You do not have permission to access this storage.",
     business_crafting_submit = "Start Crafting: %s",
     business_crafting_required = "Required Items",
     business_crafting_required_item = "%s (x%s)",
@@ -251,10 +256,13 @@ Language["en"] = {
     insufficient_funds_rent = "You do not have enough money to rent this (%s more required).",
     business_price_success = "You have successfully purchased this business for %s.",
     business_rent_success = "You have successfully rented this business for %s per day.",
+    business_sell_success = "You have successfully sold this business for %s.",
+    business_sell_fail = "You cannot sell this business.",
     owner_role = "Owner",
     employee_role = "Employee",
     market_manage_settings_success = "You have successfully updated your business's settings.",
     interact_far = "You are too far away to interact with this.",
+    
 }
 
 -- data:

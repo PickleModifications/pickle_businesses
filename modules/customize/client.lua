@@ -47,8 +47,17 @@ function Customize_GetLocationIndexById(id)
     end
 end
 
-function Customize_GetBusinessRanks(businessId)
-    --- TODO: Implement this
+function Customize_GetBusinessRanks(businessId, isMenu)
+    if not currentCustomize then return end
+    local businessId = currentCustomize.businessId
+    if not businessId then return end
+    local business = Businesses[businessId]
+    if not business then return end
+    local ranks = {}
+    for i=1, #business.roles do 
+        ranks[#ranks + 1] = business.roles[i].label
+    end
+    return ranks
 end
 
 function Customize_PositionEditorMenu()
@@ -403,6 +412,10 @@ function Customize_AddLocationMenu()
             businessRanks = { currentRank }
         else
             businessRanks = Customize_GetBusinessRanks(currentCustomize.businessId, true)
+            if currentLocation.rank > #businessRanks then
+                currentRank = #businessRanks
+                currentLocation.rank = currentRank
+            end
         end
         options[#options + 1] = {label = _L("customize_location_add_storage_rank"), description = _L("customize_location_add_storage_rank_desc"), icon = "user-tie", defaultIndex = currentRank, values = businessRanks, close = false}
     elseif locationType == "crafting" then
@@ -838,6 +851,28 @@ function Customize_UpdatePricePrompt(priceType)
     return Customize_OpenBusinessMenu()
 end
 
+function SelectNearbyPlayerMenu(label, subtitle, targetId, cb)
+    lib.callback("pickle_businesses:getNearbyPlayers", "", function(nearbyPlayers)
+        local nearbyPlayerOptions = {}
+        local idKeys = {}
+        for i=1, #nearbyPlayers do
+            nearbyPlayerOptions[#nearbyPlayerOptions + 1] = {label = nearbyPlayers[i].name, value = nearbyPlayers[i].id}
+            idKeys[nearbyPlayers[i].id] = #nearbyPlayerOptions
+        end
+        local input = lib.inputDialog(label, {
+            {type = 'select', label = subtitle, options = nearbyPlayerOptions, required = true, default = targetId or nearbyPlayers[1].id},
+        })
+        if input and input[1] and tonumber(input[1]) and tonumber(input[1]) > 0 then
+            cb({
+                id = tonumber(input[1]),
+                name = nearbyPlayers[idKeys[tonumber(input[1])]].name
+            })
+        else
+            cb(nil)
+        end
+    end)
+end
+
 function Customize_OpenTransferMenu()
     if not currentCustomize or not currentCustomize.businessId then return Customize_OpenBusinessMenu() end
     local business = Businesses[currentCustomize.businessId]
@@ -857,6 +892,13 @@ function Customize_OpenTransferMenu()
         options = options
     }, function(selected, scrollIndex, args)
         if options[selected].pbOptionType == "transfer" then
+            SelectNearbyPlayerMenu(_L("customize_transfer_transfer"), _L("customize_transfer_target"), targetId, function(target)
+                if not target or not Customize_GenericConfirm(_L("customize_transfer_transfer_confirm", target.name)) then 
+                    return Customize_OpenTransferMenu()
+                end
+                TriggerServerEvent("pickle_businesses:transferBusiness", currentCustomize.businessId, target.id)
+                Customize_CloseBusinessMenu()
+            end)
         elseif options[selected].pbOptionType == "sell" then
             if not Customize_GenericConfirm(_L("customize_transfer_sell_confirm", NumberWithCommas(sellPrice))) then
                 return SetTimeout(100, function()
@@ -864,6 +906,7 @@ function Customize_OpenTransferMenu()
                 end)
             end
             TriggerServerEvent("pickle_businesses:sellBusiness", currentCustomize.businessId)
+            Customize_CloseBusinessMenu()
         end
     end)
     lib.showMenu('pb_customize_transfer')
@@ -1019,8 +1062,12 @@ function Customize_OpenBusinessMenu(data, cb)
             lib.hideMenu()
             if Customize_GenericConfirm(_L("end_lease_confirm")) then
                 TriggerServerEvent("pickle_businesses:endLease", currentCustomize.businessId)
+                Customize_CloseBusinessMenu()
+            else
+                SetTimeout(100, function()
+                    Customize_OpenBusinessMenu()
+                end)
             end
-            Customize_CloseBusinessMenu()
         elseif options[selected].pbOptionType == "create" then
             if not currentCustomize.businessId then
                 if not currentCustomize.price and not currentCustomize.rent then

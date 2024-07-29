@@ -62,7 +62,6 @@ function OpenBillingTargetMenu(businessId, locationId, data)
             {type = 'select', label = _L("billing_charge_target"), options = nearbyPlayerOptions, required = true, default = targetId or nearbyPlayers[1].id},
         })
         if input and input[1] and tonumber(input[1]) and tonumber(input[1]) > 0 then
-            print(idKeys[tonumber(input[1])])
             data.target = {
                 id = tonumber(input[1]),
                 name = nearbyPlayers[idKeys[tonumber(input[1])]].name

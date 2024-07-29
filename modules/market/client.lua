@@ -140,8 +140,14 @@ RegisterNetEvent("pickle_businesses:updateTradeInventory", function(businessId, 
 end)
 
 RegisterNetEvent("pickle_businesses:updateEmployees", function(businessId, employees)
+    local newEmployees = {}
+    local isEmployee = (Businesses[businessId].employees[identifier] ~= nil)
     for i=1, #employees do 
-        Businesses[businessId].employees[employees[i].identifier] = employees[i]
+        newEmployees[employees[i].identifier] = employees[i]
+    end
+    Businesses[businessId].employees = newEmployees
+    if (isEmployee and not newEmployees[identifier]) or (not isEmployee and newEmployees[identifier]) then
+        DisplayBusinessLocations(businessId)
     end
     if currentBusinessUI ~= businessId then return end
     SendNUIMessage({

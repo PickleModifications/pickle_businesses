@@ -1,25 +1,34 @@
-local tempOpened = false
-
-local identifier = ""
-
 Businesses = {}
 LocalBusinessLocations = {}
 LocalBusinessStatus = {}
+identifier = ""
 isAdmin = false
 
-function IsBusinessEmployee(businessId)
+function GetBusinessEmployee(businessId)
     local business = Businesses[businessId]
-    print(isAdmin)
+    if not business then return end
     if isAdmin then return true end
-    if not business.owner then return false end
-    if identifier == business.owner then return true end
-    if not business.employees then return false end
-    for i=1, #business.employees do
-        if business.employees[i].identifier == identifier then
+    if business.owner and identifier == business.owner then return business.employees[identifier] end
+    return business.employees[identifier]
+end
+
+function CheckPermissionLevel(businessId, rankIndex)
+    local business = Businesses[businessId]
+    if not business then return false end
+    if isAdmin then return true end
+    local employee = GetBusinessEmployee(businessId)
+    if not employee then return false end
+    local roleId = employee.roleId
+    if rankIndex > #business.roles then 
+        rankIndex = #business.roles
+    end
+    for i=1, #business.roles do
+        if business.roles[i].id == roleId then
             return true
+        elseif rankIndex == i then
+            return false
         end
     end
-    return false
 end
 
 function RefreshInventory(data)
@@ -49,8 +58,9 @@ function DisplayBusinessLocations(businessId)
         billing = false,
         market = false,
     }
+    local employee = GetBusinessEmployee(businessId)
     if business.owner then
-        if IsBusinessEmployee(businessId) then
+        if employee then
             canInteract.crafting = true
             canInteract.storage = true
             canInteract.billing = true
@@ -97,6 +107,9 @@ function DisplayBusinessLocations(businessId)
                             OpenCraftingMenu(businessId, location.id)
                         end, businessId, location.id)
                     elseif location.type == "storage" then
+                        if not CheckPermissionLevel(businessId, location.rank) then
+                            return ShowNotification(_L("business_storage_no_permission"))
+                        end
                         Inventory.OpenStash(location.storageId)
                     elseif location.type == "billing" then
                         OpenBillingMenu(businessId, location.id)
@@ -208,13 +221,6 @@ RegisterNetEvent("pickle_businesses:updateBusiness", function(index, data)
         DisplayBusinessLocations(index)
     else
         Businesses = data
-    end
-    if tempOpened then return end
-    tempOpened = true
-    local index
-    for k,v in pairs(Businesses) do
-        index = k
-        break
     end
 end)
 
