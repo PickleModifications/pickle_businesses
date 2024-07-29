@@ -30,6 +30,7 @@ Config.BusinessAdministration = {
 }
 
 Config.BusinessSettings = {
+    rentCron = "*/1 * * * *",
     sellScale = 0.5, -- The multiplier to give back to the player when selling a business to the "state".
     maxLocations = 75, -- The maximum amount of locations a business can have.
     recentSalesCapacity = 3, -- How many recent sales to store.

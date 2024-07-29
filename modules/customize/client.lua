@@ -858,6 +858,10 @@ function SelectNearbyPlayerMenu(label, subtitle, targetId, cb)
             nearbyPlayerOptions[#nearbyPlayerOptions + 1] = {label = nearbyPlayers[i].name, value = nearbyPlayers[i].id}
             idKeys[nearbyPlayers[i].id] = #nearbyPlayerOptions
         end
+        if #nearbyPlayerOptions <= 0 then
+            ShowNotification(_L("no_nearby_players"))
+            return cb(nil)
+        end
         local input = lib.inputDialog(label, {
             {type = 'select', label = subtitle, options = nearbyPlayerOptions, required = true, default = targetId or nearbyPlayers[1].id},
         })

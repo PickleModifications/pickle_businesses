@@ -180,7 +180,6 @@ MarketManage.UpdateRecentSales = function(data) {
 MarketManage.ViewRecentSale = function(index) {
     let sale = Market.data.recent_sales[index];
     let totalPrice = 0;
-    let taxes = 10;
     let itemsHtml = "";
     for (let i=0; i<sale.items.length; i++) {
         let itemCost = sale.items[i].price * sale.items[i].quantity;
@@ -217,9 +216,7 @@ MarketManage.ViewRecentSale = function(index) {
                 <div class="inventory" style="margin-top:0.5vw; background-color: var(--color2); padding: 0.5vw;">
                     ${itemsHtml}
                 </div>
-                <div style="margin-top:0.5vw;"><b>${_L("subtotal")}:</b> ${numberWithCommas(totalPrice)}</div>
-                <div style="margin-top:0.5vw;"><b>${_L("taxes")}:</b> -${numberWithCommas(taxes)}</div>
-                <div style="margin-top:0.5vw;"><b>${_L("total")}:</b> ${numberWithCommas(totalPrice - taxes)}</div>
+                <div style="margin-top:0.5vw;"><b>${_L("total")}:</b> ${numberWithCommas(totalPrice)}</div>
             </div>
         </div>
     </div>

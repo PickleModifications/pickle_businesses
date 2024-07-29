@@ -221,6 +221,9 @@ RegisterNetEvent("pickle_businesses:updateBusiness", function(index, data)
         DisplayBusinessLocations(index)
     else
         Businesses = data
+        for k,v in pairs(Businesses) do
+            DisplayBusinessLocations(k)
+        end
     end
 end)
 

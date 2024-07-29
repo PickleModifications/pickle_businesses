@@ -41,8 +41,6 @@ Language["en"] = {
     market_recent_item = "%s Item",
     market_sku = "SKU: %s",
     purchased_items = "Purchased Items",
-    subtotal = "Subtotal",
-    taxes = "Taxes",
     total = "Total",
     customer = "Customer",
     date = "Date",
@@ -184,6 +182,8 @@ Language["en"] = {
     business_end_lease_success = "You have successfully ended the lease of this business.",
     customize_transfer_sell = "Sell Business (%s)",
     customize_transfer_sell_confirm = "Are you sure you want to sell the business for %s? \n\nThis will erase all employees and items.",
+    business_transfer_fail = "You cannot transfer this business to them.",
+    business_transfer_success = "You have successfully transferred the business to %s.",
     arrow_adjust = "Left and Right Arrow to Adjust",
     customize_business_created = "You have successfully created a business.",
     business_not_found = "Business not found.",
@@ -262,7 +262,7 @@ Language["en"] = {
     employee_role = "Employee",
     market_manage_settings_success = "You have successfully updated your business's settings.",
     interact_far = "You are too far away to interact with this.",
-    
+    no_nearby_players = "There are no nearby players.",
 }
 
 -- data:

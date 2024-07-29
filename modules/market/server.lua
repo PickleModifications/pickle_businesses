@@ -629,8 +629,7 @@ end)
 RegisterNetEvent("pickle_businesses:editEmployee", function(businessId, identifier, roleId)
     local source = source
     local business = Businesses[businessId]
-    if not business or not identifier then return end
-    if not CanPlayerHireToRole(source, businessId, roleId) then
+    if not business or not identifier or identifier == GetIdentifier(source) or not CanPlayerHireToRole(source, businessId, roleId) then
         ShowNotification(source, _L("no_permission"))
         return
     end

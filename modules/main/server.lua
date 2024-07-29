@@ -1,5 +1,3 @@
--- TODO: Reduce usage of pickle_businesses:updateBusiness
-
 Businesses = {}
 
 function CreateBusiness(businessData)
@@ -1061,13 +1059,17 @@ function UpdateStoreWipeSQL(businessId)
     end)
 end
 
-function StoreWipe(businessId)
+function StoreWipe(businessId, source)
     local business = Businesses[businessId]
     if not business then return end
-    Businesses[businessId].owner = nil
     Businesses[businessId].label = "Untitled Business"
-    Businesses[businessId].roles = {}
-    Businesses[businessId].employees = {}
+    if source then
+        ResetBusinessOwner(businessId, source)
+    else
+        Businesses[businessId].owner = nil
+        Businesses[businessId].roles = {}
+        Businesses[businessId].employees = {}
+    end
     Businesses[businessId].trade_listings = {}
     Businesses[businessId].daily_sales = {}
     Businesses[businessId].recent_sales = {}
@@ -1081,27 +1083,8 @@ function StoreWipe(businessId)
     TriggerClientEvent("pickle_businesses:updateBusiness", -1, businessId, Businesses[businessId])
 end
 
-RegisterNetEvent("pickle_businesses:initializePlayer", function()
-    local source = source
-    while not Inventory.Ready do Wait(10) end
-    TriggerClientEvent("pickle_businesses:setupInventory", source, {items = Inventory.Items})
-    TriggerClientEvent("pickle_businesses:updateBusiness", source, nil, Businesses)
-    TriggerClientEvent("pickle_businesses:setIdentifier", source, GetIdentifier(source), CanAdministrateBusinesses(source))
-end)
-
-RegisterNetEvent("pickle_businesses:purchaseBusiness", function(businessId, purchaseType)
-    local source = source
+function ResetBusinessOwner(businessId, source)
     local identifier = GetIdentifier(source)
-    local business = Businesses[businessId]
-    local purchaseType = (purchaseType == "purchase" and "price" or "rent")
-    if not business then return end
-    if business.owner then return ShowNotification(source, _L("business_already_owned")) end
-    local cost = business[purchaseType]  
-    if business.price > GetPaymentMethodAmount(source, "cash") then
-        return ShowNotification(source, _L("insufficient_funds_" .. purchaseType, NumberWithCommas(cost)))
-    end
-    if not BusinessCallback("ownerCheck", source, businessId, purchaseType, cost) then return end
-    ChargePaymentMethod(source, "cash", cost)
     Businesses[businessId].owner = identifier
     Businesses[businessId].roles = {}
     Businesses[businessId].roles[1] = {
@@ -1133,10 +1116,34 @@ RegisterNetEvent("pickle_businesses:purchaseBusiness", function(businessId, purc
     Businesses[businessId].employees = {
         [identifier] = {
             name = GetPlayerCharacterName(source),
-            roleId = business.roles[1].id,
+            roleId = Businesses[businessId].roles[1].id,
             pendingMoney = 0
         }
     }
+end
+
+RegisterNetEvent("pickle_businesses:initializePlayer", function()
+    local source = source
+    while not Inventory.Ready do Wait(10) end
+    TriggerClientEvent("pickle_businesses:setupInventory", source, {items = Inventory.Items})
+    TriggerClientEvent("pickle_businesses:updateBusiness", source, nil, Businesses)
+    TriggerClientEvent("pickle_businesses:setIdentifier", source, GetIdentifier(source), CanAdministrateBusinesses(source))
+end)
+
+RegisterNetEvent("pickle_businesses:purchaseBusiness", function(businessId, purchaseType)
+    local source = source
+    local identifier = GetIdentifier(source)
+    local business = Businesses[businessId]
+    local purchaseType = (purchaseType == "purchase" and "price" or "rent")
+    if not business then return end
+    if business.owner then return ShowNotification(source, _L("business_already_owned")) end
+    local cost = business[purchaseType]  
+    if business.price > GetPaymentMethodAmount(source, "cash") then
+        return ShowNotification(source, _L("insufficient_funds_" .. purchaseType, NumberWithCommas(cost)))
+    end
+    if not BusinessCallback("ownerCheck", source, businessId, purchaseType, cost) then return end
+    ChargePaymentMethod(source, "cash", cost)
+    ResetBusinessOwner(businessId, source)
     Businesses[businessId].renting = (purchaseType == "rent")
     UpdateStoreOwnerSQL(businessId)
     BusinessCallback("postOwner", source, businessId, purchaseType, cost)
@@ -1166,7 +1173,13 @@ RegisterNetEvent("pickle_businesses:sellBusiness", function(businessId)
 end)
 
 RegisterNetEvent("pickle_businesses:transferBusiness", function(businessId, target)
-    print("TRANSFER BUSINESS", businessId, target)
+    local source = source
+    local business = Businesses[businessId]
+    if not business or (business.owner ~= GetIdentifier(source) and not CanAdministrateBusinesses(source)) or business.renting then return ShowNotification(source, _L("business_transfer_fail")) end
+    local targetIdentifier = GetIdentifier(target)
+    if not targetIdentifier then return ShowNotification(source, _L("business_transfer_fail")) end
+    ShowNotification(source, _L("business_transfer_success", GetPlayerCharacterName(target)))
+    StoreWipe(businessId, target)
 end)
 
 lib.callback.register("pickle_businesses:getInventory", function(source)
@@ -1239,8 +1252,29 @@ function ParseGameInfoSQL(data)
     }
 end
 
+function ProcessBusinessRent()
+    for index, business in pairs(Businesses) do
+        if business.owner and business.renting then
+            local cost = business.rent
+            if business.money < cost then
+                Businesses[index].money = 0
+                StoreWipe(index)
+            else
+                Businesses[index].money = Businesses[index].money - cost
+            end
+            MySQL.Async.execute("UPDATE pickle_businesses_locations SET money = @money WHERE id = @id;", {
+                ["@money"] = Businesses[index].money,
+                ["@id"] = Businesses[index].id
+            })
+        end
+        TriggerClientEvent("pickle_businesses:updateBusiness", -1, nil, Businesses)
+    end
+end
+
 MySQL.ready(function()
-    Wait(1000)
+    lib.cron.new(Config.BusinessSettings.rentCron, function()
+        ProcessBusinessRent()
+    end)
     MySQL.Async.fetchAll("SELECT * FROM pickle_businesses_locations;", {}, function(result)
         if result then
             for _, row in ipairs(result) do
@@ -1265,4 +1299,6 @@ MySQL.ready(function()
             end
         end
     end)
+    Wait(1000)
+    ProcessBusinessRent()
 end)
