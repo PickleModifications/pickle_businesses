@@ -1,0 +1,363 @@
+
+/* TRADE SUB-MENU */
+
+#app-market #market-container > .trade.container {
+    position: relative;
+    display: flex;
+    width: 100%;
+    height: calc(100% - 5vw);
+}
+
+#app-market #market-container > .trade.container > .content {
+    display: flex;
+    align-content: flex-start;
+    flex-wrap: wrap;
+    row-gap: 1vw;
+    column-gap: 1vw;
+    width: 100%;
+    padding: 1vw;
+    overflow-y: scroll;
+}
+
+#app-market #market-container > .trade.container .listings {
+    display: flex;
+    flex-wrap: wrap;
+    row-gap: 0.311vw;
+    column-gap: 0.311vw;
+    width: 100%;
+
+}
+
+#app-market #market-container > .trade.container .add-listing {
+    display: flex;
+    column-gap: 0.5vw;
+    align-items: center;
+}
+
+#app-market #market-container .trade-listing {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 14.15vw;
+    background-color: var(--color2);
+}
+#app-market #market-container .trade-listing > .actions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0.5vw;
+}
+#app-market #market-container .trade-listing > div:nth-child(1) {
+    display: flex;
+    flex-direction: column;
+}
+
+#app-market #market-container .trade-listing-section {
+    display: flex;
+    flex-direction: column;
+}
+
+#app-market #market-container .trade-listing-section > .header {
+    padding: 0.5vw;
+    display: flex;
+    align-items: center;
+}
+
+#app-market #market-container .trade-listing-section > .header > div:nth-child(1) {
+    font-weight: 600;
+    font-size: 0.9vw;
+}
+
+#app-market #market-container .trade-listing-section > .header > div:nth-child(2) {
+    font-size: 0.75vw;
+    margin-left: 0.5vw;
+}
+
+#app-market #market-container .trade-listing-section > .inventory-container {
+    display: flex;
+    padding: 0 0.5vw;
+    max-width: 100%;
+}
+
+#app-market #market-container .trade-listing-section > .inventory-container > div {
+    display: flex;
+    column-gap: 0.25vw;
+    overflow-x: scroll;
+    padding-bottom: 0.5vw;
+}
+
+#app-market #market-container .trade-listing-section > .inventory-container > div > div {
+    display: flex;
+    flex: none;
+    width: 3.08vw;
+    height: 3.08vw;
+    background-color: var(--color1);
+}
+
+#app-market #market-container .trade-listing-section > .inventory-container > div::-webkit-scrollbar {
+    height: 0.25vw;
+}
+
+#app-market #market-container .trade-listing > .actions > div {
+    display: flex;
+    margin-top: auto;
+    margin-bottom: 0.4vw;
+    background-color: var(--success1);
+    padding: 0.25vw 1vw;
+} 
+
+#app-market #market-container .market-trade-item {
+    position: relative;
+    background-color: var(--color3);
+    width: 6vw;
+    height: 6vw;
+}
+
+#app-market #market-container .market-trade-item > div {
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 50%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+#app-market #market-container .market-trade-item > div > div {
+    display: flex;
+    padding: 0.25vw;
+    font-size: 0.6vw;
+}
+
+#app-market #market-container .market-trade-item > div > div:nth-child(1) {
+    justify-content: flex-end;
+}
+
+#app-market #market-container .market-manage-item > div > div:nth-child(1) {
+    font-size: 0.4vw !important;
+    justify-content: flex-end;
+}
+
+/* Prompt */
+
+#app-market #market-container > .trade.container > .prompt {
+    display: flex;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    z-index: 4;
+}
+
+#app-market #market-container > .trade.container > .prompt > div {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    background-color: var(--color3);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+#app-market #market-container > .trade.container > .prompt.short > div {
+    width: 30vw;
+    height: 8vw;
+}
+
+#app-market #market-container > .trade.container > .prompt.medium > div {
+    display: flex;
+    width: 25vw;
+}
+
+
+#app-market #market-container > .trade.container > .prompt.tall > div {
+    display: flex;
+    width: 25vw;
+}
+
+#app-market #market-container > .trade.container > .prompt > div > .header {
+    position: relative;
+    display: flex;
+    width: 100%;
+    height: 2vw;
+    background-color: var(--color2);
+}
+
+#app-market #market-container > .trade.container > .prompt > div > .header > div {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+#app-market #market-container > .trade.container > .prompt > div > .header > i {
+    color: var(--error1);
+    font-size: 1vw;
+    position: absolute;
+    right: 1vw;
+    top: 50%;
+    transform: translate(0, -50%);
+}
+
+#app-market #market-container > .trade.container > .prompt > div > .content {
+    display: flex;
+    flex-direction: column;
+    padding: 0.5vw;
+    height: 100%;
+    overflow-y: auto;
+}
+
+/*Add Listing*/
+
+#app-market #market-container > .trade.container .select-inventory-container {
+    overflow-x: auto;
+    display: flex;
+    column-gap: 0.5vw;
+    align-items: center;
+}
+
+/* Handle */
+#app-market #market-container > .trade.container .select-inventory-container::-webkit-scrollbar-thumb {
+    background: var(--color1);
+    border-radius: 1vw;
+}
+  
+/* Handle on hover */
+#app-market #market-container > .trade.container .select-inventory-container::-webkit-scrollbar-thumb:hover {
+    background: var(--color2);
+}
+
+#app-market #market-container > .trade.container .select-inventory-container::-webkit-scrollbar {
+    height: 0.5vw;
+}
+
+#app-market #market-container > .trade.container .select-inventory {
+    background-color: var(--color1);
+    height: 100%;
+    margin-top: 0.5vw;
+    padding: 1vw;
+    display: flex;
+    row-gap: 0.5vw;
+    column-gap: 0.5vw;
+    flex: none;
+    margin-bottom: 0.5vw;
+    min-width: calc(100% - 2vw);
+}
+
+#app-market #market-container > .trade.container .select-inventory .market-manage-item,
+#app-market #market-container > .trade.container .select-inventory .market-buy-item,
+#app-market #market-container > .trade.container .select-inventory .market-add-item {
+    width: 3.35vw !important;
+    height: 3.35vw !important;
+    flex: none;
+}
+
+#app-market #market-container > .trade.container .select-inventory .market-manage-item > div > div,
+#app-market #market-container > .trade.container .select-inventory .market-buy-item > div > div {
+    font-size: 0.4vw !important;
+}
+
+
+
+#app-market #market-container > .trade.container .select-inventory-tall-container {
+    display: flex;
+    column-gap: 0.5vw;
+    row-gap: 0.5vw;
+    max-height: 10vw;
+}
+
+/* Handle */
+#app-market #market-container > .trade.container .select-inventory-tall-container::-webkit-scrollbar-thumb {
+    background: var(--color1);
+    border-radius: 1vw;
+}
+  
+/* Handle on hover */
+#app-market #market-container > .trade.container .select-inventory-tall-container::-webkit-scrollbar-thumb:hover {
+    background: var(--color2);
+}
+
+#app-market #market-container > .trade.container .select-inventory-tall-container::-webkit-scrollbar {
+    height: 0.5vw;
+}
+
+#app-market #market-container > .trade.container .select-inventory-tall {
+    background-color: var(--color1);
+    margin-top: 0.5vw;
+    padding: 1vw;
+    display: flex;
+    row-gap: 0.5vw;
+    column-gap: 0.5vw;
+    flex-wrap: wrap;
+    margin-bottom: 0.5vw;
+    width: calc(100% - 2vw);
+    overflow-y: auto;
+}
+
+#app-market #market-container > .trade.container .select-inventory-tall .market-manage-item,
+#app-market #market-container > .trade.container .select-inventory-tall .market-add-item {
+    width: 5vw !important;
+    height: 5vw !important;
+}
+
+#app-market #market-container > .trade.container .select-inventory-tall .market-manage-item > div > div,
+#app-market #market-container > .trade.container .select-inventory-tall .market-add-item > div > div {
+    font-size: 0.4vw !important;
+}
+
+#app-market #market-container .trade.container .prompt.add-listing-give .selected-item {
+    display: none; 
+    flex-direction: column;
+    margin-top: 0.5vw;
+}
+
+#app-market #market-container .trade.container .prompt.add-listing-give .selected-item .market-buy-item {
+    margin-top: 0.5vw;
+    background-color: var(--color2) !important;
+    width: 4.3275vw !important;
+    height: 4.3275vw !important;
+}
+
+#app-market #market-container .trade.container .prompt.add-listing-give .selected-item .market-buy-item > div > div {
+    font-size: 0.5vw !important;
+}
+
+#app-market #market-container .trade.container .prompt.add-listing-give .selected-item-options {
+    margin-top: 0.5vw; 
+    margin-left: 0.5vw;
+}
+
+#app-market #market-container .trade.container .prompt.add-listing-receive .selected-item {
+    display: none; 
+    flex-direction: column;
+    margin-top: 0.5vw;
+}
+
+#app-market #market-container .trade.container .prompt.add-listing-receive .selected-item .market-buy-item {
+    margin-top: 0.5vw;
+    background-color: var(--color2) !important;
+    width: 4.3275vw !important;
+    height: 4.3275vw !important;
+}
+
+#app-market #market-container .trade.container .prompt.add-listing-receive .selected-item .market-buy-item > div > div {
+    font-size: 0.5vw !important;
+}
+
+#app-market #market-container .trade.container .prompt.add-listing-receive .selected-item-options {
+    margin-top: 0.5vw; 
+    margin-left: 0.5vw;
+}
+
+
+#app-market #market-container .trade.container .prompt .italic {
+    font-style: italic;
+    font-size: 0.5vw;
+    color: var(--color7);
+}

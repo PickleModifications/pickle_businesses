@@ -1,0 +1,43 @@
+@font-face {
+  font-family: Montserrat;
+  src: url(../fonts/Montserrat-VariableFont_wght.ttf);
+}
+
+/* OLD THEME */
+/* 
+--color1: #020617;
+--color2: #0F172A;
+--color3: #1E293B;
+--color4: #334155;
+--color5: #475569;
+--color6: #64748B;
+--color7: #94A3B8;
+--color8: #CBD5E1;
+--color9: #E2E8F0;
+--color10: #F1F5F9;
+--color11: #F8FAFC; */
+
+body {
+  --color1: #0A0A0A;
+  --color2: #171717;
+  --color3: #262626;
+  --color4: #404040;
+  --color5: #525252;
+  --color6: #737373;
+  --color7: #94A3B8;
+  --color8: #CBD5E1;
+  --color9: #E2E8F0;
+  --color10: #F1F5F9;
+  --color11: #F8FAFC;
+  --success1: #16A34A;
+  --success2: #15803D;
+  --error1: #DC2626;
+  --error2: #B91C1C;
+  background: transparent;
+  color: white;
+  overflow: hidden;
+  user-select: none;
+  font-family: Montserrat;
+  color: white;
+  font-size: 1vw;
+}
