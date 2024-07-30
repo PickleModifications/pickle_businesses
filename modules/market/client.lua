@@ -387,7 +387,8 @@ RegisterNUICallback("closeMenu", function(data, cb)
     SetNuiFocus(false, false)
 end)
 
-CreateThread(function() 
-    Wait(1000)
-    TriggerServerEvent("pickle_businesses:initializePlayer")
+RegisterNetEvent("onResourceStart", function(name)
+    if name == GetCurrentResourceName() then
+        TriggerServerEvent("pickle_businesses:initializePlayer")
+    end
 end)

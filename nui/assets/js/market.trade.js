@@ -111,7 +111,7 @@ MarketTrade.AddListingSubpromptSelectOffer = function(tradeData, offerType, inde
         $(".prompt.add-listing-"+offerType+" .selected-item-container .market-buy-item").remove();
         $(".prompt.add-listing-"+offerType+" .selected-item-container").append(`
             <div class="market-buy-item">
-                <div style="background-image: url(${CONFIG_INVENTORY_IMG_DIR + "/" + item.name}.png);">
+                <div style="background-image: url(${Market.data.config.img_folder + "/" + item.name}.png);">
                     <div>${canRemove ? `<i class="delete fas fa-trash"></i>` : ""}</div>
                     <div></div>
                     <div>${item.label}</div>
@@ -235,7 +235,7 @@ MarketTrade.AddListingPrompt = function(data, sku) {
     for (let i=0; i<tradeData.give.items.length; i++) {
         giveItemsHtml += `
             <div class="market-buy-item give">
-                <div style="background-image: url(${CONFIG_INVENTORY_IMG_DIR + "/" + tradeData.give.items[i].name}.png);">
+                <div style="background-image: url(${Market.data.config.img_folder + "/" + tradeData.give.items[i].name}.png);">
                     <div>x${tradeData.give.items[i].quantity}</div>
                     <div></div>
                     <div>${Market.GetItemLabel(tradeData.give.items[i].name)}</div>
@@ -259,7 +259,7 @@ MarketTrade.AddListingPrompt = function(data, sku) {
     for (let i=0; i<tradeData.receive.items.length; i++) {
         receiveItemsHtml += `
             <div class="market-buy-item receive">
-                <div style="background-image: url(${CONFIG_INVENTORY_IMG_DIR + "/" + tradeData.receive.items[i].name}.png);">
+                <div style="background-image: url(${Market.data.config.img_folder + "/" + tradeData.receive.items[i].name}.png);">
                     <div>x${tradeData.receive.items[i].quantity}</div>  
                     <div></div>
                     <div>${Market.GetItemLabel(tradeData.receive.items[i].name)}</div>
@@ -431,7 +431,7 @@ MarketTrade.RefreshListings = function(data) {
         for (let j=0; j<trade_listings[i].give.items.length; j++) {
             giveItemsHtml += `
                 <div class="market-manage-item">
-                    <div style="background-image: url(${CONFIG_INVENTORY_IMG_DIR + "/" + trade_listings[i].give.items[j].name}.png);">
+                    <div style="background-image: url(${Market.data.config.img_folder + "/" + trade_listings[i].give.items[j].name}.png);">
                         <div>x${trade_listings[i].give.items[j].quantity}</div>
                         <div></div>
                         <div>${Market.GetItemLabel(trade_listings[i].give.items[j].name)}</div>
@@ -461,7 +461,7 @@ MarketTrade.RefreshListings = function(data) {
         for (let j=0; j<trade_listings[i].receive.items.length; j++) {
             receiveItemsHtml += `
                 <div class="market-manage-item">
-                    <div style="background-image: url(${CONFIG_INVENTORY_IMG_DIR + "/" + trade_listings[i].receive.items[j].name}.png);">
+                    <div style="background-image: url(${Market.data.config.img_folder + "/" + trade_listings[i].receive.items[j].name}.png);">
                         <div>x${trade_listings[i].receive.items[j].quantity}</div>
                         <div></div>
                         <div>${Market.GetItemLabel(trade_listings[i].receive.items[j].name)}</div>

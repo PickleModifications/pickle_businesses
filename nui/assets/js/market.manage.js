@@ -186,7 +186,7 @@ MarketManage.ViewRecentSale = function(index) {
         totalPrice += itemCost;
         itemsHtml += `
             <div class="market-manage-item">
-                <div style="background-image: url(${CONFIG_INVENTORY_IMG_DIR + "/" + sale.items[i].name}.png);">
+                <div style="background-image: url(${Market.data.config.img_folder + "/" + sale.items[i].name}.png);">
                     <div>${numberWithCommas(itemCost)}</div>
                     <div>x${sale.items[i].quantity}</div>
                     <div>${Market.GetItemLabel(sale.items[i].name)}</div>
@@ -246,7 +246,7 @@ MarketManage.GetTradeInventoryHtml = function() {
 
         let insert = `
         <div class="market-manage-item">
-            <div style="background-image: url(${CONFIG_INVENTORY_IMG_DIR + "/" + trade_inventory[i].name}.png);">
+            <div style="background-image: url(${Market.data.config.img_folder + "/" + trade_inventory[i].name}.png);">
                 <div></div>
                 <div>x${trade_inventory[i].quantity}</div>
                 <div>${Market.GetItemLabel(trade_inventory[i].name)}</div>
@@ -348,7 +348,7 @@ MarketManage.AddItemPrompt_SelectItem = function(itemId) {
     $(".prompt.add-item .selected-item-container .market-buy-item").remove();
     $(".prompt.add-item .selected-item-container").append(`
         <div class="market-buy-item">
-            <div style="background-image: url(${CONFIG_INVENTORY_IMG_DIR + "/" + item.name}.png);">
+            <div style="background-image: url(${Market.data.config.img_folder + "/" + item.name}.png);">
                 <div></div>
                 <div>x${item.count}</div>
                 <div>${item.label}</div>
@@ -483,7 +483,7 @@ MarketManage.EditItemPrompt = function(listingId) {
                     <div style="display:flex;">
                         <div class="selected-item-container">
                             <div class="market-buy-item">
-                                <div style="background-image: url(${CONFIG_INVENTORY_IMG_DIR + "/" + tradeItem.name}.png);">
+                                <div style="background-image: url(${Market.data.config.img_folder + "/" + tradeItem.name}.png);">
                                     <div></div>
                                     <div>x${tradeItem.quantity}</div>
                                     <div>${Market.GetItemLabel(tradeItem.name)}</div>
@@ -552,6 +552,9 @@ MarketManage.RefreshSettings = function(data) {
     }
     if (Market.data.game_info != undefined && Market.data.game_info.webhooks != undefined) {
         webhooks = Market.data.game_info.webhooks;
+        webhooks.business = webhooks.business || "";
+        webhooks.purchase = webhooks.purchase || "";
+        webhooks.trade = webhooks.trade || "";
     }
     let settingsHtml = `
         <div class="options">

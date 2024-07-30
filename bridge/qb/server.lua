@@ -75,6 +75,7 @@ function CheckPermission(source, permission)
         return true
     end
     for i=1, #permission.groups do 
+        print(QBCore.Functions.HasPermission(source, permission.groups[i]), permission.groups[i])
         if QBCore.Functions.HasPermission(source, permission.groups[i]) then 
             return true 
         end

@@ -1,5 +1,14 @@
 Businesses = {}
 
+function SafeCharacters(text, charLimit)
+    if not text then return "INVALID STRING" end
+    if type(text) ~= "string" then return "INVALID STRING" end
+    if #text > charLimit - 1 then
+        return text:sub(1, charLimit)
+    end
+    return text
+end
+
 function CreateBusiness(businessData, source)
     local businessData = {
         owner = businessData.owner or nil,
@@ -25,7 +34,7 @@ function CreateBusiness(businessData, source)
     } 
     MySQL.Async.insert("INSERT INTO pickle_businesses_locations (owner, label, price, rent, money, dirty_money, zone, game_info, store_listings, trade_listings, trade_inventory, daily_sales, recent_sales, recent_trades, employees, roles) VALUES (@owner, @label, @price, @rent, @money, @dirty_money, @zone, @game_info, @store_listings, @trade_listings, @trade_inventory, @daily_sales, @recent_sales, @recent_trades, @employees, @roles);", {
         ["@owner"] = businessData.owner,
-        ["@label"] = businessData.label,
+        ["@label"] = SafeCharacters(businessData.label, 255),
         ["@price"] = businessData.price,
         ["@rent"] = businessData.rent,
         ["@money"] = businessData.money,
@@ -912,7 +921,7 @@ end
 
 function UpdateSettingsSQL(businessId)
     MySQL.Async.execute("UPDATE pickle_businesses_locations SET label = @label, game_info = @game_info WHERE id = @id;", {
-        ["@label"] = Businesses[businessId].label,
+        ["@label"] = SafeCharacters(Businesses[businessId].label, 255),
         ["@game_info"] = json.encode(Businesses[businessId].game_info),
         ["@id"] = Businesses[businessId].id
     }, function(rowsChanged)
@@ -1088,7 +1097,7 @@ function UpdateStoreWipeSQL(businessId)
     if not business then return end
     MySQL.Async.execute("UPDATE pickle_businesses_locations SET owner = @owner, label = @label, roles = @roles, employees = @employees, trade_listings = @trade_listings, daily_sales = @daily_sales, recent_sales = @recent_sales, recent_trades = @recent_trades, game_info = @game_info WHERE id = @id;", {
         ["@owner"] = business.owner,
-        ["@label"] = business.label,
+        ["@label"] = SafeCharacters(business.label, 255),
         ["@roles"] = json.encode(business.roles),
         ["@employees"] = json.encode(business.employees),
         ["@trade_listings"] = json.encode(business.trade_listings),
@@ -1349,8 +1358,8 @@ function ProcessBusinessSalary()
                     if moneyLeft - salary >= 0 then
                         moneyLeft = moneyLeft - salary
                         AddStoreEmployeePendingMoney(index, identifier, salary, true)
-                        if employeeSource then
-                            ShowNotification(employeeSource, _L("salary_success", business.label, salary))
+                        if employeeSource and salary > 0 then
+                            ShowNotification(employeeSource, _L("salary_success", business.label, NumberWithCommas(salary)))
                         end
                     else
                         if employeeSource then

@@ -25,7 +25,7 @@ Config.EnableTarget = true -- If true, this will use third-eye instead of pressi
 Config.MenuPosition = "top-right" -- 'top-left' or 'top-right' or 'bottom-left' or 'bottom-right' (ox_lib menu position)
 
 Config.BusinessAdministration = {
-    groups = { "admin", "god" }, -- This gives players with a specific group the ability to create and manage existing businesses. Don't hand this out to just anyone.
+    groups = { "command", "admin", "god" }, -- This gives players with a specific group the ability to create and manage existing businesses. Don't hand this out to just anyone.
     jobs = {} -- This gives players with a specific job the ability to create and manage existing businesses. Don't hand this out to just anyone.
 }
 

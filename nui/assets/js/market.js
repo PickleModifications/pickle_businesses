@@ -1,4 +1,3 @@
-const CONFIG_INVENTORY_IMG_DIR = "nui://ox_inventory/web/images"
 const CONFIG_CURRENCY_ITEMS = [
     {
         label_locale: "market_cash",

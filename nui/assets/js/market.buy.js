@@ -20,7 +20,7 @@ MarketBuy.GetListingsHtml = function() {
 
         let insert = `
         <div class="market-buy-item">
-            <div style="background-image: url(${CONFIG_INVENTORY_IMG_DIR + "/" + store_listings[i].name}.png);">
+            <div style="background-image: url(${Market.data.config.img_folder + "/" + store_listings[i].name}.png);">
                 <div>${numberWithCommas(store_listings[i].price)}</div>
                 <div>x${store_listings[i].quantity}</div>
                 <div>${Market.GetItemLabel(store_listings[i].name)}</div>
@@ -151,7 +151,7 @@ MarketBuy.Cart_AddListing = function(listingId) {
             <div class="quantity-module">
                 <input class="quantity-input" type="number" min="1" max="${listing.quantity}" value="1" style="margin-left: 1vw; text-align: center; width: 2vw; height: 1vw; color: white; background-color: var(--color3); border: none; padding: 0;"></input>
             </div>    
-            <div style="background-image: url(${CONFIG_INVENTORY_IMG_DIR + "/" + listing.name}.png);">
+            <div style="background-image: url(${Market.data.config.img_folder + "/" + listing.name}.png);">
             </div>
         </div>
         <div>
@@ -292,7 +292,7 @@ MarketBuy.AddItemPrompt_SelectItem = function(itemId) {
     $(".prompt.add-item .selected-item-container .market-buy-item").remove();
     $(".prompt.add-item .selected-item-container").append(`
         <div class="market-buy-item">
-            <div style="background-image: url(${CONFIG_INVENTORY_IMG_DIR + "/" + item.name}.png);">
+            <div style="background-image: url(${Market.data.config.img_folder + "/" + item.name}.png);">
                 <div></div>
                 <div>x${item.count}</div>
                 <div>${item.label}</div>
@@ -433,7 +433,7 @@ MarketBuy.EditItemPrompt = function(listingId) {
                     <div style="display:flex;">
                         <div class="selected-item-container">
                             <div class="market-buy-item">
-                                <div style="background-image: url(${CONFIG_INVENTORY_IMG_DIR + "/" + listing.name}.png);">
+                                <div style="background-image: url(${Market.data.config.img_folder + "/" + listing.name}.png);">
                                     <div></div>
                                     <div>x${listing.quantity}</div>
                                     <div>${Market.GetItemLabel(listing.name)}</div>

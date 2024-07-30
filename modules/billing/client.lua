@@ -52,6 +52,7 @@ function OpenBillingTargetMenu(businessId, locationId, data)
     if not business or not location or not data then return end
     local targetId = data.target?.id or nil
     lib.callback("pickle_businesses:getNearbyPlayers", "", function(nearbyPlayers)
+        if #nearbyPlayers == 0 then return ShowNotification(_L("no_nearby_players")) end
         local nearbyPlayerOptions = {}
         local idKeys = {}
         for i=1, #nearbyPlayers do

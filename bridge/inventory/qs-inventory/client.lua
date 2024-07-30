@@ -16,9 +16,13 @@ Inventory.OpenStash = function(id, label)
     TriggerEvent("inventory:client:SetCurrentStash", id)
 end
 
-RegisterNetEvent("pickle_consumables:setupInventory", function(data)
+RegisterNetEvent("pickle_businesses:setupInventory", function(data)
     Inventory.Items = data.items
     Inventory.Ready = true
+end)
+
+RegisterNetEvent("pickle_businesses:updateInventory", function(inventory) 
+    RefreshInventory(inventory)
 end)
 
 function InitializeInventory()
