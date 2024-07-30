@@ -1186,7 +1186,7 @@ end
 
 RegisterNetEvent("pickle_businesses:initializePlayer", function()
     local source = source
-    while not Inventory.Ready do Wait(10) end
+    while not Inventory or not Inventory.Ready do Wait(10) end
     TriggerClientEvent("pickle_businesses:setupInventory", source, {items = Inventory.Items})
     TriggerClientEvent("pickle_businesses:updateBusiness", source, nil, Businesses)
     TriggerClientEvent("pickle_businesses:setIdentifier", source, GetIdentifier(source), CanAdministrateBusinesses(source))
@@ -1382,7 +1382,7 @@ function ProcessBusinessSalary()
 end
 
 MySQL.ready(function()
-    while not Inventory.Ready do Wait(10) end
+    while not Inventory or not Inventory.Ready do Wait(10) end
     lib.cron.new(Config.BusinessSettings.rentCron, function()
         ProcessBusinessRent()
     end)
