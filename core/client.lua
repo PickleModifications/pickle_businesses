@@ -266,10 +266,17 @@ function EnsureInteractionModel(index)
     return entity
 end
 
-function DeleteInteractionEntity(index)
+function DeleteInteractionEntity(index, instantDelete)
     local data = Interactions[index] 
     if not data or not data.entity then return end
-    DeleteEntity(data.entity)
+    local entity = data.entity
+    if instantDelete then
+        DeleteEntity(entity)
+    else
+        SetTimeout(1500, function()
+            DeleteEntity(entity)
+        end)
+    end
     Interactions[index].entity = nil
 end
 
@@ -290,22 +297,25 @@ function CreateInteraction(data, selected)
     until not Interactions[index]
     local options = FormatOptions(index, data)
     Interactions[index] = {
+        noInteract = data.noInteract,
         selected = selected,
         options = options,
         label = data.label,
         model = data.model,
         coords = data.coords,
+        interactOffset = data.interactOffset or vector3(0.0, 0.0, 0.0),
         target = data.target,
         offset = data.offset,
         radius = data.radius or 1.0,
         heading = data.heading,
         hiddenKeypress = data.hiddenKeypress
     }
+    if Interactions[index].noInteract then return index end
     if Config.EnableTarget then
         if data.target then
             AddTargetModel(data.target, Interactions[index].radius, Interactions[index].options)
         else
-            Interactions[index].zone = AddTargetZone(Interactions[index].coords, Interactions[index].radius, Interactions[index].options)
+            Interactions[index].zone = AddTargetZone(Interactions[index].coords + Interactions[index].interactOffset, Interactions[index].radius, Interactions[index].options)
         end
     end
     return index
@@ -320,6 +330,7 @@ function UpdateInteraction(index, data, selected)
     if data.options then 
         Interactions[index].options = FormatOptions(index, data)
     end
+    if Interactions[index].noInteract then return end
     if Config.EnableTarget then
         if Interactions[index].target then 
             RemoveTargetZone(Interactions[index].zone)
@@ -331,11 +342,15 @@ function UpdateInteraction(index, data, selected)
     end
 end
 
-function DeleteInteraction(index)
+function DeleteInteraction(index, instantDelete)
     local data = Interactions[index] 
     if not data then return end
     if (data.entity) then 
-        DeleteInteractionEntity(index)
+        DeleteInteractionEntity(index, instantDelete)
+    end
+    if Interactions[index].noInteract then 
+        Interactions[index] = nil
+        return 
     end
     if Config.EnableTarget then
         if data.target then 
@@ -359,7 +374,7 @@ Citizen.CreateThread(function()
                 local dist = #(pcoords-coords)
                 if (dist < Config.RenderDistance) then 
                     EnsureInteractionModel(k)
-                    if not Config.EnableTarget or v.hiddenKeypress then
+                    if not v.noInteract and (not Config.EnableTarget or v.hiddenKeypress) then
                         if not Config.EnableTarget and not v.hiddenKeypress and not v.model and Config.Marker and Config.Marker.enabled then
                             wait = 0
                             DrawMarker(Config.Marker.id, coords.x, coords.y, coords.z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 
@@ -374,7 +389,7 @@ Citizen.CreateThread(function()
                 elseif v.entity then
                     DeleteInteractionEntity(k)
                 end
-            elseif not Config.EnableTarget and v.target then
+            elseif not v.noInteract and not Config.EnableTarget and v.target then
                 local entity = GetNearestEntityModel(v.target)
                 if entity then
                     local offset = v.offset or vector3(0.0, 0.0, 0.0)
@@ -421,6 +436,6 @@ end)
 AddEventHandler('onResourceStop', function(resourceName)
     if (GetCurrentResourceName() ~= resourceName) then return end
     for k,v in pairs(Interactions) do 
-        DeleteInteraction(k)
+        DeleteInteraction(k, true)
     end
 end)

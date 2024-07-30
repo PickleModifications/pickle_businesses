@@ -1,7 +1,8 @@
 Businesses = {}
 
-function CreateBusiness(businessData)
+function CreateBusiness(businessData, source)
     local businessData = {
+        owner = businessData.owner or nil,
         label = businessData.label or "Untitled Business",
         price = businessData.price or 0,
         rent = businessData.rent or 0,
@@ -22,7 +23,8 @@ function CreateBusiness(businessData)
         employees = businessData.employees or {},
         roles = businessData.roles or {},
     } 
-    MySQL.Async.insert("INSERT INTO pickle_businesses_locations (label, price, rent, money, dirty_money, zone, game_info, store_listings, trade_listings, trade_inventory, daily_sales, recent_sales, recent_trades, employees, roles) VALUES (@label, @price, @rent, @money, @dirty_money, @zone, @game_info, @store_listings, @trade_listings, @trade_inventory, @daily_sales, @recent_sales, @recent_trades, @employees, @roles);", {
+    MySQL.Async.insert("INSERT INTO pickle_businesses_locations (owner, label, price, rent, money, dirty_money, zone, game_info, store_listings, trade_listings, trade_inventory, daily_sales, recent_sales, recent_trades, employees, roles) VALUES (@owner, @label, @price, @rent, @money, @dirty_money, @zone, @game_info, @store_listings, @trade_listings, @trade_inventory, @daily_sales, @recent_sales, @recent_trades, @employees, @roles);", {
+        ["@owner"] = businessData.owner,
         ["@label"] = businessData.label,
         ["@price"] = businessData.price,
         ["@rent"] = businessData.rent,
@@ -54,7 +56,14 @@ function CreateBusiness(businessData)
             }, function(rowsChanged)
             end)
         end
-        InitializeBusiness(businessData, dontSync)
+        if source then
+            InitializeBusiness(businessData, true)
+            ResetBusinessOwner("business_"..businessData.id, source)
+            UpdateStoreWipeSQL("business_"..businessData.id)
+            TriggerClientEvent("pickle_businesses:updateBusiness", -1, "business_"..businessData.id, Businesses["business_"..businessData.id])
+        else
+            InitializeBusiness(businessData)
+        end
     end)
 end
 
@@ -120,6 +129,7 @@ function RegisterBusinessStashes(locations)
 end
 
 function GetBusinessEmployees(businessId)
+    if not Businesses[businessId] then return end
     local employees = {}
     for identifier, employee in pairs(Businesses[businessId].employees) do
         local employee = {
@@ -963,6 +973,38 @@ function CanPlayerHireToRole(source, businessId, roleId)
     end
 end
 
+function AddStoreEmployeePendingMoney(businessId, identifier, amount, dontUpdate)
+    if not Businesses[businessId] then return end
+    if not Businesses[businessId].employees[identifier] then return end
+    SetStoreEmployeePendingMoney(businessId, identifier, Businesses[businessId].employees[identifier].pendingMoney + amount, dontUpdate)
+end
+
+function RemoveStoreEmployeePendingMoney(businessId, identifier, amount, dontUpdate)
+    if not Businesses[businessId] then return end
+    if not Businesses[businessId].employees[identifier] then return end
+    SetStoreEmployeePendingMoney(businessId, identifier, Businesses[businessId].employees[identifier].pendingMoney - amount, dontUpdate)
+end
+
+function SetStoreEmployeePendingMoney(businessId, identifier, amount, dontUpdate)
+    if not Businesses[businessId] then return end
+    if not Businesses[businessId].employees[identifier] then return end
+    amount = (amount > 0 and amount or 0)
+    local source = GetSourceFromIdentifier(identifier)
+    if source and amount > 0 then
+        return AddPaymentMethodAmount(source, "cash", amount)
+    end
+    Businesses[businessId].employees[identifier].pendingMoney = (amount > 0 and amount or 0)
+    if dontUpdate then return end
+    UpdateStoreEmployeesSQL(businessId)
+    TriggerClientEvent("pickle_businesses:updateEmployees", -1, businessId, GetBusinessEmployees(businessId))
+end
+
+function GetStoreEmployeePendingMoney(businessId, identifier)
+    if not Businesses[businessId] then return end
+    if not Businesses[businessId].employees[identifier] then return 0 end
+    return Businesses[businessId].employees[identifier].pendingMoney
+end
+
 function AddStoreEmployee(businessId, source, roleId)
     local identifier = GetIdentifier(source)
     local roleIndex, role = GetStoreRoleById(businessId, roleId)
@@ -1122,6 +1164,17 @@ function ResetBusinessOwner(businessId, source)
     }
 end
 
+function DeleteBusiness(businessId)
+    local business = Businesses[businessId]
+    if not business then return end
+    MySQL.Async.execute("DELETE FROM pickle_businesses_locations WHERE id = @id;", {
+        ["@id"] = business.id
+    }, function(rowsChanged)
+    end)
+    Businesses[businessId] = nil
+    TriggerClientEvent("pickle_businesses:updateBusiness", -1, businessId, nil)
+end
+
 RegisterNetEvent("pickle_businesses:initializePlayer", function()
     local source = source
     while not Inventory.Ready do Wait(10) end
@@ -1180,6 +1233,19 @@ RegisterNetEvent("pickle_businesses:transferBusiness", function(businessId, targ
     if not targetIdentifier then return ShowNotification(source, _L("business_transfer_fail")) end
     ShowNotification(source, _L("business_transfer_success", GetPlayerCharacterName(target)))
     StoreWipe(businessId, target)
+end)
+
+RegisterNetEvent("pickle_businesses:removeBusiness", function(businessId, roleId, data)
+    local source = source
+    local business = Businesses[businessId]
+    if not business then return end
+    if business.game_info.placed and business.owner ~= GetIdentifier(source) and not CanAdministrateBusinesses(source) then
+        return ShowNotification(source, _L("no_permission"))
+    elseif not CanAdministrateBusinesses(source) then
+        return ShowNotification(source, _L("no_permission"))
+    end
+    ShowNotification(source, _L("business_removed", business.label))
+    DeleteBusiness(businessId)
 end)
 
 lib.callback.register("pickle_businesses:getInventory", function(source)
@@ -1271,9 +1337,47 @@ function ProcessBusinessRent()
     end
 end
 
+function ProcessBusinessSalary()
+    for index, business in pairs(Businesses) do
+        if business.owner then
+            local moneyLeft = business.money
+            for identifier, employee in pairs(business.employees) do
+                local employeeSource = GetSourceFromIdentifier(identifier)
+                local roleIndex, role = GetStoreRoleById(index, employee.roleId)
+                if role then
+                    local salary = role.salary
+                    if moneyLeft - salary >= 0 then
+                        moneyLeft = moneyLeft - salary
+                        AddStoreEmployeePendingMoney(index, identifier, salary, true)
+                        if employeeSource then
+                            ShowNotification(employeeSource, _L("salary_success", business.label, salary))
+                        end
+                    else
+                        if employeeSource then
+                            ShowNotification(employeeSource, _L("salary_fail", business.label))
+                        end
+                    end
+                end
+            end
+            if Businesses[index].money ~= moneyLeft then
+                Businesses[index].money = moneyLeft
+                MySQL.Async.execute("UPDATE pickle_businesses_locations SET money = @money WHERE id = @id;", {
+                    ["@money"] = Businesses[index].money,
+                    ["@id"] = Businesses[index].id
+                })
+                UpdateStoreEmployeesSQL(index)
+                TriggerClientEvent("pickle_businesses:updateEmployees", -1, index, GetBusinessEmployees(index))
+            end
+        end
+    end
+end
+
 MySQL.ready(function()
     lib.cron.new(Config.BusinessSettings.rentCron, function()
         ProcessBusinessRent()
+    end)
+    lib.cron.new(Config.BusinessSettings.salaryCron, function()
+        ProcessBusinessSalary()
     end)
     MySQL.Async.fetchAll("SELECT * FROM pickle_businesses_locations;", {}, function(result)
         if result then
@@ -1299,6 +1403,4 @@ MySQL.ready(function()
             end
         end
     end)
-    Wait(1000)
-    ProcessBusinessRent()
 end)

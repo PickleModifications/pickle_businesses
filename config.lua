@@ -30,7 +30,8 @@ Config.BusinessAdministration = {
 }
 
 Config.BusinessSettings = {
-    rentCron = "*/1 * * * *",
+    rentCron = "*/1 * * * *", -- https://overextended.dev/ox_lib/Modules/Cron/Server for more info.
+    salaryCron = "*/1 * * * *", -- https://overextended.dev/ox_lib/Modules/Cron/Server for more info.
     sellScale = 0.5, -- The multiplier to give back to the player when selling a business to the "state".
     maxLocations = 75, -- The maximum amount of locations a business can have.
     recentSalesCapacity = 3, -- How many recent sales to store.
@@ -359,6 +360,17 @@ Config.DefaultCallbacks = { -- If undefined in zone.callbacks, these will be use
     postPurchase = function(source, businessId, business, cart, price)
         -- Add checks for licenses, etc. Whatever you want!
     end,
+}
+
+Config.PlaceableMarkets = { -- This is where you can create placeable market items.
+    ["metal"] = { -- ["item_name"] = { ... } 
+        model = `prop_food_van_02`, -- The model to display at the market location.
+        zone = "food_store", -- The business zone to associate this with (Config.BusinessZones).
+    }
+}
+
+Config.InteractOffsetModels = { -- These are used for placeable markets that have an abnormal offset, add more as needed.
+    [`prop_food_van_02`] = vector3(0.0, 0.0, 1.5),
 }
 
 Config.BusinessZones = { -- This is where you can create business types, which give access to zone-specific supplies and craftables.

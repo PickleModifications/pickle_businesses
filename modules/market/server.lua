@@ -455,6 +455,7 @@ function CanInteractWithRoleId(source, businessId, roleId)
     local business = Businesses[businessId]
     if not business then return end
     if CanAdministrateBusinesses(source) then return true end
+    if GetIdentifier(source) == business.owner then return true end
     local employee = GetBusinessEmployee(source, businessId)
     if roleId == employee.roleId then return false end
     local roles = business.roles
@@ -709,5 +710,41 @@ RegisterNetEvent("pickle_businesses:balanceTransaction", function(businessId, ac
         ShowNotification(source, _L("market_manage_withdraw_success", NumberWithCommas(amount), _L("money_" .. currency)))
         RemoveStoreFunds(businessId, currency, amount)
         AddPaymentMethodAmount(source, currency, amount)
+    end
+end)
+
+RegisterNetEvent("pickle_businesses:placeMarket", function(marketType, coords, rotation)
+    local source = source
+    local market = Config.PlaceableMarkets[marketType]
+    if not market then return end
+    local count = Inventory.GetItemCount(source, marketType)
+    if count < 1 then return end
+    local businessData = {
+        owner = GetIdentifier(source),
+        price = 0,
+        rent = 0,
+        zone = market.zone,
+        game_info = {
+            placed = true,
+            bounds = {},
+            locations = {
+                {
+                    type = "market",
+                    model = market.model,
+                    coords = coords,
+                    rotation = rotation
+                }
+            }
+        },
+    } 
+    ShowNotification(source, _L("customize_market_created"))
+    CreateBusiness(businessData, source)
+end)
+
+CreateThread(function()
+    for k, v in pairs(Config.PlaceableMarkets) do
+        RegisterUsableItem(k, function(source)
+            TriggerClientEvent("pickle_businesses:placeMarket", source, k) 
+        end)
     end
 end)

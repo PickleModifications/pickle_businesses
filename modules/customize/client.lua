@@ -986,6 +986,9 @@ function Customize_OpenBusinessMenu(data, cb)
     end
 
     if currentCustomize.admin then
+        if currentCustomize.businessId then
+            options[#options + 1] = {pbOptionType = "delete", label = _L("customize_delete"), icon = "trash" }
+        end
         options[#options + 1] = {pbOptionType = "create", label = currentCustomize.businessId and _L("customize_save") or _L("customize_create"), icon = "save", close = false}
     end
 
@@ -1071,6 +1074,16 @@ function Customize_OpenBusinessMenu(data, cb)
                     Customize_OpenBusinessMenu()
                 end)
             end
+        elseif options[selected].pbOptionType == "delete" then
+            lib.hideMenu()
+            if Customize_GenericConfirm(_L("customize_delete_confirm")) then
+                TriggerServerEvent("pickle_businesses:removeBusiness", currentCustomize.businessId)
+                Customize_CloseBusinessMenu()
+            else
+                SetTimeout(100, function()
+                    Customize_OpenBusinessMenu()
+                end)
+            end
         elseif options[selected].pbOptionType == "create" then
             if not currentCustomize.businessId then
                 if not currentCustomize.price and not currentCustomize.rent then
@@ -1097,7 +1110,6 @@ function Customize_OpenBusinessMenu(data, cb)
                         return
                     end
                     lib.callback("pickle_businesses:customize:createBusiness", "", function(result)
-                        print("Creation:", result)
                     end, currentCustomize)
                     Customize_CloseBusinessMenu()
                 end

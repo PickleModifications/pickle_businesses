@@ -62,13 +62,13 @@ function InitializeInventory()
 end
 
 if Framework == "ESX" then
-    function UsableItem(name, cb)
+    function RegisterUsableItem(name, cb)
         ESX.RegisterUsableItem(name, function(source, item, data) 
             cb(source, data.metadata, data.slot)
         end)
     end
 elseif Framework == "QB" or Framework == "QBOX" then
-    function UsableItem(name, cb)
+    function RegisterUsableItem(name, cb)
         QBCore.Functions.CreateUseableItem(name, function(source, data)
             local item = data
             if item.info then

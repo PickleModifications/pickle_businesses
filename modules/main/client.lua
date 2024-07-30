@@ -35,22 +35,28 @@ function RefreshInventory(data)
 end
 
 function ClearBusinessLocations(businessId)
-    for i=1, #LocalBusinessLocations do
-        if LocalBusinessLocations[i].interact then
-            DeleteInteraction(LocalBusinessLocations[i].interact)
-        elseif LocalBusinessLocations[i].object then
-            DeleteEntity(LocalBusinessLocations[i].object)
+    if not LocalBusinessLocations[businessId] then 
+        LocalBusinessLocations[businessId] = {}
+        return
+    end
+    for i=1, #LocalBusinessLocations[businessId] do
+        if LocalBusinessLocations[businessId][i].interact then
+            DeleteInteraction(LocalBusinessLocations[businessId][i].interact)
+        elseif LocalBusinessLocations[businessId][i].object then
+            DeleteEntity(LocalBusinessLocations[businessId][i].object)
         end
     end
-    LocalBusinessLocations = {}
+    LocalBusinessLocations[businessId] = {}
 end
 
 function DisplayBusinessLocations(businessId)
+    local business = Businesses[businessId]
+    if not business then return end
+    local locations = business.game_info.locations
+    if not locations or #locations == 0 then return print("^1LOCATIONS UNSET FOR BUSINESS ID:^0 ", businessId) end
     ClearBusinessLocations(businessId)
     if not CanDisplayBusinessLocations(businessId) then return end
-    local business = Businesses[businessId]
-    local locations = business.game_info.locations
-    if not locations then return print("^1LOCATIONS UNSET FOR BUSINESS ID:^0 ", businessId) end
+    if business.game_info.placed then return DisplayMarketLocations(businessId) end
     local canInteract = {
         management = true,
         crafting = false,
@@ -71,7 +77,7 @@ function DisplayBusinessLocations(businessId)
     end
     for i=1, #locations do
         local location = locations[i]
-        LocalBusinessLocations[i] = {
+        LocalBusinessLocations[businessId][i] = {
             id = location.id,
             coords = location.coords,
             rotation = location.rotation,
@@ -90,7 +96,7 @@ function DisplayBusinessLocations(businessId)
             if not business.owner then
                 label = _L("business_interact_purchase")
             end
-            LocalBusinessLocations[i].interact = CreateInteraction({
+            LocalBusinessLocations[businessId][i].interact = CreateInteraction({
                 coords = vector3(location.coords.x, location.coords.y, location.coords.z),
                 heading = location.rotation.z,
                 label = label,
@@ -123,8 +129,13 @@ function DisplayBusinessLocations(businessId)
                 end
             end)
         elseif location.model then
-            LocalBusinessLocations[i].object = CreateLocalProp(location.model, location.coords.x, location.coords.y, location.coords.z, false, true)
-            FreezeEntityPosition(LocalBusinessLocations[i].object, true)
+            LocalBusinessLocations[businessId][i].interact = CreateInteraction({
+                noInteract = true,
+                coords = vector3(location.coords.x, location.coords.y, location.coords.z),
+                heading = location.rotation.z,
+                label = label,
+                model = location.model and {hash = location.model, modelType = "prop"} or nil,
+            })
         end
     end
 end
@@ -218,6 +229,9 @@ end)
 RegisterNetEvent("pickle_businesses:updateBusiness", function(index, data) 
     if index then
         Businesses[index] = data
+        if not data then 
+            return ClearBusinessLocations(index)
+        end
         DisplayBusinessLocations(index)
     else
         Businesses = data

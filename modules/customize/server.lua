@@ -185,5 +185,6 @@ lib.callback.register("pickle_businesses:customize:deleteLocation", function(sou
 end)
 
 RegisterCommand("createbusiness", function(source, args, raw)
+    if not CanAdministrateBusinesses(source) then return ShowNotification(_L("no_permission")) end
     TriggerClientEvent("pickle_businesses:customize:createBusiness", source)
 end)

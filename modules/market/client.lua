@@ -1,4 +1,5 @@
 local currentBusinessUI = nil
+local placingMarket = false
 
 local function SortArrayByProperty(keyName, a, b)
     a = tostring(a[keyName])
@@ -57,6 +58,70 @@ function OpenBusinessStore(key)
         })
         SetNuiFocus(true, true)
     end, key)
+end
+
+function OpenMarketSubmenu(businessId)
+    local business = Businesses[businessId]
+    if not business then return end
+    options = {}
+    options[#options + 1] = {
+        title = _L("market_access"),
+        icon = "store",
+        onSelect = function()
+            OpenBusinessStore(businessId)
+        end
+    }
+    options[#options + 1] = {
+        title = _L("market_remove"),
+        icon = "trash",
+        onSelect = function()
+            if Customize_GenericConfirm(_L("market_remove_confirm")) then
+                TriggerServerEvent("pickle_businesses:removeBusiness", businessId)
+            else
+                OpenMarketSubmenu(businessId)
+            end
+        end
+    }
+    lib.registerContext({
+        id = 'pb_billing_charge',
+        title = _L("billing_charge_title"),
+        -- canClose = false,
+        onExit = function()
+            lib.hideContext()
+            SetTimeout(100, function()
+                OpenBillingMenu(businessId, locationId, data)
+            end)
+        end,
+        options = options
+    })
+    lib.showContext('pb_billing_charge')
+end
+
+function DisplayMarketLocations(businessId)
+    local business = Businesses[businessId]
+    if not business then return end
+    local locations = business.game_info.locations
+    local index = 1
+    local location = locations[index]
+    LocalBusinessLocations[businessId][index] = {
+        id = index,
+        coords = location.coords,
+        rotation = location.rotation,
+        model = location.model,
+    }
+    LocalBusinessLocations[businessId][index].interact = CreateInteraction({
+        label = _L("business_interact_market"),
+        coords = vector3(location.coords.x, location.coords.y, location.coords.z),
+        interactOffset = Config.InteractOffsetModels[location.model],
+        heading = location.rotation.z,
+        model = location.model and {hash = location.model, modelType = "prop"} or nil,
+    }, function()
+        if isAdmin or business.owner == identifier then
+            OpenMarketSubmenu(businessId)
+        else
+            OpenBusinessStore(businessId)
+        end
+    end)
 end
 
 RegisterNetEvent("pickle_businesses:updateListings", function(businessId, listings)
@@ -197,6 +262,62 @@ RegisterNetEvent("pickle_businesses:updateBusinessSettings", function(businessId
             game_info = settings.game_info
         }
     })
+end)
+
+RegisterNetEvent("pickle_businesses:placeMarket", function(marketType)
+    local market = Config.PlaceableMarkets[marketType]
+    if not market then return print("^1[ERROR] MARKET " .. marketType .. " DOESN'T EXIST!^0") end
+    if placingMarket then return end
+    placingMarket = true
+    local object = nil
+    local endCoords = nil
+    local model = market.model
+    local rotation = {x = 0, y = 0, z = 0}
+    CreateThread(function()
+        local ticksLeft = 0
+        local cancelled = false
+        while placingMarket do
+            ticksLeft = ticksLeft - 1
+            if ticksLeft == 0 or endCoords == nil then
+                CreateThread(function()
+                    local coords = GetRaycastCoords()
+                    if coords and #(coords - GetEntityCoords(PlayerPedId())) < 10.0 then
+                        endCoords = coords
+                    end
+                    ticksLeft = 5
+                end)
+            end
+            if endCoords then
+                if not object then
+                    minZ = GetModelDimensions(model).z
+                    object = CreateLocalProp(model, endCoords.x, endCoords.y, endCoords.z, true, false, false)
+                    SetEntityCollision(object, false, false)
+                    SetEntityAsMissionEntity(object, true, true)
+                    FreezeEntityPosition(object, true)
+                end 
+                SetEntityCoords(object, endCoords.x, endCoords.y, endCoords.z - minZ, false, false, false, false)
+                SetEntityRotation(object, rotation.x, rotation.y, rotation.z, 2, true)
+            end
+            ShowInteractText("[E] Place Market | Left Arrow: Rotate Left | Right Arrow: Rotate Right")
+            if IsControlPressed(1, 174) then
+                rotation.z = rotation.z + 0.5
+            elseif IsControlPressed(1, 175) then
+                rotation.z = rotation.z - 0.5
+            end
+            if IsControlPressed(1, 51) or IsControlJustPressed(1, 201) then
+                break
+            elseif IsControlPressed(1, 177) then
+                cancelled = true
+                break
+            end
+            Wait(0)
+        end
+        placingMarket = false
+        DeleteEntity(object)
+        if cancelled then return end
+        if not endCoords then return end
+        TriggerServerEvent("pickle_businesses:placeMarket", marketType, vector3(endCoords.x, endCoords.y, endCoords.z), vector3(rotation.x, rotation.y, rotation.z))
+    end)
 end)
 
 RegisterNUICallback("marketBuyAction", function(data, cb)
