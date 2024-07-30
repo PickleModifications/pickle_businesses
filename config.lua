@@ -363,7 +363,7 @@ Config.DefaultCallbacks = { -- If undefined in zone.callbacks, these will be use
 }
 
 Config.PlaceableMarkets = { -- This is where you can create placeable market items.
-    ["metal"] = { -- ["item_name"] = { ... } 
+    ["food_trailer"] = { -- ["item_name"] = { ... } 
         model = `prop_food_van_02`, -- The model to display at the market location.
         zone = "food_store", -- The business zone to associate this with (Config.BusinessZones).
     }
