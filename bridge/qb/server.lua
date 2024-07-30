@@ -160,6 +160,11 @@ CreateThread(function()
         return (Inventory.GetItemCount(source, name) > 0)
     end
 
+    -- STASH FALLBACK
+    
+    Inventory.RegisterStash = function(id, label, coords)
+    end
+
     RegisterCallback("pickle_businesses:getInventory", function(source, cb)
         cb(Inventory.GetInventory(source))
     end)

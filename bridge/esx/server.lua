@@ -165,6 +165,11 @@ CreateThread(function()
         return xPlayer.hasWeapon(name)
     end
 
+    -- STASH FALLBACK
+
+    Inventory.RegisterStash = function(id, label, coords)
+    end
+
     MySQL.ready(function() 
         MySQL.Async.fetchAll("SELECT * FROM items;", {}, function(results) 
             for i=1, #results do 

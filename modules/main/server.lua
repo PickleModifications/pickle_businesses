@@ -1382,6 +1382,7 @@ function ProcessBusinessSalary()
 end
 
 MySQL.ready(function()
+    while not Inventory.Ready do Wait(10) end
     lib.cron.new(Config.BusinessSettings.rentCron, function()
         ProcessBusinessRent()
     end)
