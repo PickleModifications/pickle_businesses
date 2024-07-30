@@ -6,17 +6,13 @@ Config.Language = "en" -- Language to use.
 
 Config.InteractDistance = 2.0
 
-Config.RenderDistance = 20.0 -- Table Prop Display Radius.
+Config.RenderDistance = 40.0 -- Prop Display Radius.
 
-Config.DisplayDistance = 2.0 -- Interact and Queue Display Radius
-
-Config.TheftDistance = 10 -- Theft is allowed when the crafter is further than this. Set to 0 if you wish to disable this.
+Config.DisplayDistance = 2.0 -- Interact Radius
 
 Config.ItemImageFolder = "nui://ox_inventory/web/images" -- Don't put a slash at the end.
 
-Config.PersistentTables = true -- Save placed tables in the database, this is new a feature!
-
-Config.XPEnabled = true -- Enables the XP feature for adding and checking XP Levels.
+Config.XPEnabled = false -- Enables the XP feature for adding and checking XP Levels.
 
 Config.InventoryLimit = false -- If using ESX 1.1, this must be on if using a limit-based inventory.
 
@@ -363,7 +359,7 @@ Config.DefaultCallbacks = { -- If undefined in zone.callbacks, these will be use
 }
 
 Config.PlaceableMarkets = { -- This is where you can create placeable market items.
-    ["food_trailer"] = { -- ["item_name"] = { ... } 
+    ["metal"] = { -- ["item_name"] = { ... } 
         model = `prop_food_van_02`, -- The model to display at the market location.
         zone = "food_store", -- The business zone to associate this with (Config.BusinessZones).
     }

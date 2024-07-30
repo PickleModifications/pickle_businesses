@@ -719,6 +719,7 @@ RegisterNetEvent("pickle_businesses:placeMarket", function(marketType, coords, r
     if not market then return end
     local count = Inventory.GetItemCount(source, marketType)
     if count < 1 then return end
+    Inventory.RemoveItem(source, marketType, 1)
     local businessData = {
         owner = GetIdentifier(source),
         price = 0,
