@@ -1,13 +1,21 @@
-CREATE TABLE IF NOT EXISTS `player_blueprints` (
-  `identifier` varchar(46) NOT NULL,
-  `blueprints` longtext DEFAULT NULL,
-  PRIMARY KEY (`identifier`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci ROW_FORMAT=DYNAMIC;
-
-CREATE TABLE IF NOT EXISTS `pickle_businesses` (
+CREATE TABLE IF NOT EXISTS `pickle_businesses_locations` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `owner` varchar(255) NOT NULL,
-  `table_type` varchar(255) NOT NULL,
-  `data` longtext NOT NULL,
+  `label` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `owner` varchar(46) DEFAULT NULL,
+  `renting` tinyint(4) DEFAULT 0,
+  `price` int(11) NOT NULL DEFAULT 0,
+  `rent` int(11) NOT NULL DEFAULT 0,
+  `money` int(11) NOT NULL DEFAULT 0,
+  `dirty_money` int(11) NOT NULL DEFAULT 0,
+  `zone` varchar(255) NOT NULL DEFAULT '0',
+  `game_info` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `store_listings` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `trade_listings` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `trade_inventory` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `daily_sales` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `recent_sales` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `recent_trades` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `employees` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `roles` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;

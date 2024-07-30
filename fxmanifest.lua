@@ -1,7 +1,8 @@
 fx_version "cerulean"
 game "gta5"
 author "Pickle Mods"
-version "v1.3.0"
+description "The best player-owned business system for your server!"
+version "v0.1.0"
 
 ui_page "nui/index.html"
 
@@ -41,6 +42,6 @@ escrow_ignore {
 
 	-- COMMENT BELOW IF NOT SOURCE --
 
-	"modules/**/*.*",
-	"core/*.*",
+	-- "modules/**/*.*",
+	-- "core/*.*",
 }
