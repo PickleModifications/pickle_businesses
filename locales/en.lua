@@ -202,6 +202,7 @@ Language["en"] = {
     business_crafting_required_item = "%s (x%s)",
     business_crafting_required_desc = "These items are required to craft this.",
     business_crafting_failed = "The crafting of this item has failed.",
+    business_crafting_success = "The crafting of this item has completed.",
     business_crafting_already = "You are already crafting an item.",
     business_crafting_occupied = "This crafting location is currently being used.",
     business_crafting_missing_item = "You are missing %s (x%s).",

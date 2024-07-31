@@ -389,6 +389,7 @@ end)
 
 RegisterNetEvent("onResourceStart", function(name)
     if name == GetCurrentResourceName() then
+        Wait(1000)
         TriggerServerEvent("pickle_businesses:initializePlayer")
     end
 end)

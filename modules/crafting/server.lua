@@ -112,10 +112,11 @@ lib.callback.register("pickle_businesses:startCrafting", function(source, busine
     return true
 end)
 
-RegisterNetEvent("pickle_businesses:finishCrafting", function()
+RegisterNetEvent("pickle_businesses:finishCrafting", function(success)
     local source = source
     local craftingPlayer = CraftingPlayers[source]
-    if not craftingPlayer then 
+    if not craftingPlayer or not success then 
+        CraftingPlayers[source] = nil
         return ShowNotification(source, _L("business_crafting_failed"))
     end
     local businessId = craftingPlayer.businessId
@@ -134,4 +135,5 @@ RegisterNetEvent("pickle_businesses:finishCrafting", function()
         {type = "item", name = craftableItem.name, count = craftableItem.count},
     })
     CraftingPlayers[source] = nil
+    ShowNotification(source, _L("business_crafting_success"))
 end)

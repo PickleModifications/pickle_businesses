@@ -1066,6 +1066,7 @@ function BusinessCallback(callbackName, source, businessId, ...)
     if not business then return end
     local zoneIndex, zone = GetBusinessZoneIndexByName(business.zone)
     if not zone then return end
+    if not zone.callbacks then return true end
     local callback = zone.callbacks[callbackName]
     if not callback then 
         callback = Config.DefaultCallbacks[callbackName]

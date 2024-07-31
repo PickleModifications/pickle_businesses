@@ -292,6 +292,21 @@ Config.Furniture = {
                 { label = "Chair #2", model = `prop_off_chair_03` },
                 { label = "Chair #3", model = `prop_off_chair_04` },
                 { label = "Chair #4", model = `prop_off_chair_05` },
+                { label = "Chair #6", model = `hei_heist_stn_chairstrip_01` },
+                { label = "Chair #7", model = `ex_mp_h_stn_chairstrip_01` },
+                { label = "Chair #8", model = `apa_mp_h_stn_chairstrip_08` },
+                { label = "Chair #9", model = `apa_mp_h_stn_chairstrip_06` },
+                { label = "Chair #10", model = `ex_mp_h_off_chairstrip_01` },
+                { label = "Chair #11", model = `hei_heist_din_chair_01` },
+                { label = "Chair #12", model = `hei_heist_din_chair_04` },
+                { label = "Chair #13", model = `h4_prop_h4_weed_chair_01a` },
+                { label = "Chair #14", model = `v_club_ch_briefchair` },
+                { label = "Chair #15", model = `ba_prop_battle_club_chair_01` },
+                { label = "Chair #16", model = `ba_prop_battle_club_chair_03` },
+                { label = "Chair #17", model = `sm_prop_offchair_smug_01` },
+                { label = "Chair #18", model = `xm_prop_x17_corp_offchair` },
+                { label = "Chair #19", model = `apa_mp_h_din_stool_04` },
+                { label = "Chair #20", model = `v_res_tre_officechair` },
             }
         },
         {
@@ -300,6 +315,204 @@ Config.Furniture = {
             options = {
                 { label = "Table #1", model = `prop_table_04` },
                 { label = "Table #2", model = `bkr_int_02_plan_table` },
+                { label = "Table #3", model = `tr_int1_plan_table05` },
+            }
+        },
+        {
+            label = "tv",
+            icon = "tv",
+            options = {
+                { label = "tv #1", model = `ch_prop_ch_cctv_wall_atta_01a` },
+                { label = "tv #2", model = `xs_x18intmod_office_tv_stand` },
+                { label = "tv #3", model = `prop_tv_flat_02b` },
+                { label = "tv #4", model = `prop_cs_tv_stand` },
+                { label = "tv #5", model = `m24_1_prop_m24_1_carrier_bank_cctv_02` },
+                { label = "tv #6", model = `prop_tv_flat_02` },
+                { label = "tv #7", model = `xs_prop_arena_screen_tv_01` },
+            }
+        },
+        {
+            label = "electronics",
+            icon = "shop",
+            options = {
+                { label = "electronics #1", model = `ba_prop_battle_club_computer_01` },
+                { label = "electronics #2", model = `bkr_ware05_pcupgrade2` },
+                { label = "electronics #3", model = `prop_pc_02a` },
+                { label = "electronics #4", model = `v_res_pctower` },
+                { label = "electronics #5", model = `bkr_ware05_pclatopbasic2` },
+                { label = "electronics #6", model = `bkr_prop_clubhouse_laptop_01b` },
+            }
+        },
+        {
+            label = "shelving",
+            icon = "shop",
+            options = {
+                { label = "shelving #1", model = `ch_chint02_flat_shelving` },
+                { label = "shelving #2", model = `ch_chint02_office_shelving` },
+                { label = "shelving #3", model = `ch_prop_ch_laundry_shelving_01b` },
+                { label = "shelving #4", model = `ch_prop_ch_laundry_shelving_01c` },
+            }
+        },
+        {
+            label = "clothing",
+            icon = "shop",
+            options = {
+                { label = "clothing #1", model = `prop_sglasses_stand_02b` },
+                { label = "shelving #2", model = `prop_bikini_disp_01` },
+                { label = "shelving #3", model = `prop_bikini_disp_04` },
+                { label = "shelving #4", model = `prop_dress_disp_02` },
+            }
+        },
+        {
+            label = "till",
+            icon = "shop",
+            options = {
+                { label = "till #1", model = `prop_till_03` },
+                { label = "till #2", model = `prop_till_01` },
+                { label = "till #3", model = `prop_till_02` },
+                { label = "till #4", model = `vw_prop_casino_till` },
+                { label = "till #5", model = `ch_prop_casino_till_01a` },
+                { label = "till #6", model = `v_53_till` },
+            }
+        },
+        {
+            label = "counter",
+            icon = "shop",
+            options = {
+                { label = "counter #1", model = `prop_ff_counter_03` },
+                { label = "counter #2", model = `prop_ff_counter_02` },
+                { label = "counter #3", model = `ch_chint02_counter` },
+                { label = "counter #4", model = `p_new_j_counter_01` },
+                { label = "counter #5", model = `p_new_j_counter_02` },
+            }
+        },
+        {
+            label = "24-7",
+            icon = "shop",
+            options = {
+                { label = "24-7 #1", model = `v_ret_247_cereal1` },
+                { label = "24-7 #2", model = `v_ret_247_vegsoup1` },
+                { label = "24-7 #3", model = `v_ret_247_popcan2` },
+                { label = "24-7 #4", model = `v_ret_247_soappowder2` },
+                { label = "24-7 #5", model = `v_ret_247_popbot4` },
+                { label = "24-7 #6", model = `v_ret_247_bread1` },
+                { label = "24-7 #6", model = `v_ret_247shelves01` },
+                { label = "24-7 #7", model = `v_ret_247shelves02` },
+                { label = "24-7 #8", model = `v_ret_247shelves03` },
+                { label = "24-7 #9", model = `v_ret_247shelves04` },
+                { label = "24-7 #10", model = `v_ret_247shelves05` },
+                { label = "24-7 #11", model = `v_ret_247_donuts` },
+                { label = "24-7 #12", model = `v_ret_247_lottery` },
+                { label = "24-7 #13", model = `prop_ven_shop_1_counter` },
+                { label = "24-7 #14", model = `prop_ff_counter_01` },
+                { label = "24-7 #15", model = `v_med_bench2` },
+                { label = "24-7 #16", model = `v_med_bench1` },
+                { label = "24-7 #17", model = `prop_fib_counter` },
+            }
+        },
+        {
+            label = "cctv",
+            icon = "shop",
+            options = {
+                { label = "cctv #1", model = `prop_dest_cctv_03b` },
+                { label = "cctv #2", model = `prop_cctv_cont_05` },
+                { label = "cctv #3", model = `prop_cctv_cont_03` },
+                { label = "cctv #4", model = `prop_cs_cctv` },
+                { label = "cctv #5", model = `prop_cctv_cont_02` },
+                { label = "cctv #6", model = `prop_cctv_cam_04a` },
+                { label = "cctv #7", model = `prop_cctv_cam_06a` },
+                { label = "cctv #8", model = `prop_cctv_cam_01a` },
+                { label = "cctv #9", model = `prop_cctv_cam_01b` },
+                { label = "cctv #10", model = `tr_prop_tr_camhedz_cctv_01a` },
+            }
+        },
+        {
+            label = "mechanic",
+            icon = "shop",
+            options = {
+                { label = "mechanic #1", model = `tr_int1_tool_draw_01d005` },
+                { label = "clothing #2", model = `tr_int1_smod_toolchest9` },
+            }
+        },
+        {
+            label = "sign",
+            icon = "shop",
+            options = {
+                { label = "sign #1", model = `ch_chint02_degenatron_neon` },
+                { label = "sign #2", model = `v_15_shrm_neonsign` },
+                { label = "sign #3", model = `prop_beer_neon_02` },
+                { label = "sign #4", model = `prop_ragganeon` },
+                { label = "sign #5", model = `sf_prop_sf_sign_neon_01a` },
+                { label = "sign #6", model = `prop_cherenneon` },
+                { label = "sign #7", model = `prop_beer_neon_01` },
+                { label = "sign #8", model = `prop_beer_neon_03` },
+                { label = "sign #9", model = `prop_loggneon` },
+                { label = "sign #10", model = `prop_patriotneon` },
+                { label = "sign #11", model = `prop_barrachneon` },
+                { label = "sign #12", model = `tr_int1_mod_neontubes_blue` },
+                { label = "sign #13", model = `ch_chint07_neon_icons01` },
+                { label = "sign #14", model = `v_ret_neon_logger` },
+                { label = "sign #15", model = `prop_cockneon` },
+                { label = "sign #16", model = `prop_beer_neon_04` },
+                { label = "sign #17", model = `ch_chint07_neon_icons04` },
+                { label = "sign #18", model = `v_4_backneon` },
+                { label = "sign #19", model = `v_19_vanillasigneon2` },
+                { label = "sign #20", model = `v_ret_neon_blarneys` },
+                { label = "sign #21", model = `prop_beerneon` },
+                { label = "sign #22", model = `v_ret_neon_baracho` },
+                { label = "sign #23", model = `ch_chint02_vinewood_neon` },
+
+            }
+        },
+        {
+            label = "Poster",
+            icon = "shop",
+            options = {
+                { label = "Poster #1", model = `m23_1_prop_m31_poster_skin_01` },
+                { label = "poster #2", model = `ba_prop_battle_poster_skin_01` },
+                { label = "poster #3", model = `m23_2_prop_m32_poster_01a` },
+                { label = "poster #4", model = `h4_prop_battle_poster_skin_03` },
+                { label = "poster #5", model = `ba_prop_battle_poster_skin_02` },
+                { label = "poster #6", model = `sum_prop_ac_qub3d_poster_01a` },
+                { label = "poster #7", model = `ba_prop_battle_poster_skin_04` },
+                { label = "poster #8", model = `ba_maisn_poster` },
+
+            }
+        },
+        {
+            label = "Kitchen",
+            icon = "shop",
+            options = {
+                { label = "Kitchen #1", model = `v_res_fridgemoda` },
+                { label = "Kitchen #2", model = `prop_ff_sink_02` },
+                { label = "Kitchen #3", model = `prop_cooker_03` },
+                { label = "Kitchen #4", model = `v_med_lab_fridge` },
+                { label = "Kitchen #5", model = `prop_bar_beerfridge_01` },
+                { label = "Kitchen #6", model = `prop_bar_fridge_02` },
+                { label = "Kitchen #7", model = `ba_prop_battle_bar_fridge_01` },
+                { label = "Kitchen #8", model = `prop_foodprocess_01` },
+                { label = "Kitchen #9", model = `prop_chip_fryer` },
+                { label = "Kitchen #10", model = `prop_food_cb_bshelf` },
+                { label = "Kitchen #11", model = `prop_food_cb_bshelf` },
+                { label = "Kitchen #12", model = `prop_bread_rack_02` },
+                { label = "Kitchen #13", model = `v_med_benchcentr` },
+                { label = "Kitchen #14", model = `v_med_metalfume` },
+            }
+        },
+        {
+            label = "BurgerShot",
+            icon = "shop",
+            options = {
+                { label = "BurgerShot #1", model = `prop_food_bs_tray_03` },
+                { label = "BurgerShot #2", model = `prop_food_bs_tray_02` },
+                { label = "BurgerShot #3", model = `prop_cs_burger_01` },
+                { label = "BurgerShot #4", model = `prop_cs_hotdog_01` },
+                { label = "BurgerShot #5", model = `prop_food_cb_tray_01` },
+                { label = "BurgerShot #6", model = `prop_food_napkin_02` },
+                { label = "BurgerShot #7", model = `prop_food_bs_cups01` },
+                { label = "BurgerShot #8", model = `prop_foodprocess_01` },
+                { label = "BurgerShot #9", model = `prop_cs_ice_locker` },
+
             }
         },
     }
@@ -307,18 +520,28 @@ Config.Furniture = {
 
 Config.Actions = {
     ["cook"] = function(data)
+        local playerPed = PlayerPedId()
         local coords = data.coords
-        local pcoords = GetEntityCoords(PlayerPedId())
+        local pcoords = GetEntityCoords(playerPed)
         local calcHeading = GetHeadingFromCoords(coords, pcoords)
+        local object = CreateProp(`prop_fish_slice_01`, coords.x, coords.y, coords.z, true, false, false)
+        AttachEntityToEntity(object, playerPed, GetPedBoneIndex(playerPed, 57005), 0.1, 0.05, -0.025, 0.0, 0.0, 150.0, false, false, false, false, 2, true)
+        SetEntityHeading(playerPed, calcHeading)
+        PlayAnim(playerPed, "amb@prop_human_bbq@male@base", "base", 8.0, -8.0, -1, 49, 0, false, false, false)
+        lib.progressBar({ duration = 5000, label = 'Cooking ' .. GetItemLabel(data.craftingItem.name) .. "..."})
+        DeleteEntity(object)
+        ClearPedTasks(playerPed)
+        return true
     end,
     ["dispense_drink"] = function(data)
+        local playerPed = PlayerPedId()
         local coords = data.coords
-        local pcoords = GetEntityCoords(PlayerPedId())
+        local pcoords = GetEntityCoords(playerPed)
         local calcHeading = GetHeadingFromCoords(coords, pcoords)
-        SetEntityHeading(PlayerPedId(), calcHeading)
-        PlayAnim(PlayerPedId(), "amb@prop_human_bbq@male@base", "base", 8.0, -8.0, -1, 49, 0, false, false, false)
+        SetEntityHeading(playerPed, calcHeading)
+        PlayAnim(playerPed, "amb@prop_human_bbq@male@base", "base", 8.0, -8.0, -1, 49, 0, false, false, false)
         lib.progressBar({ duration = 5000, label = 'Cooking ' .. GetItemLabel(data.craftingItem.name) .. "..."})
-        ClearPedTasks(PlayerPedId())
+        ClearPedTasks(playerPed)
         return true
     end,
 }
@@ -391,12 +614,52 @@ Config.BusinessZones = { -- This is where you can create business types, which g
         },
         supplies = {
             {
-                name = "water",
+                name = "syrup_mix",
                 count = 1,
                 price = 10
             },
             {
-                name = "ammo-rifle",
+                name = "carbonated_water",
+                count = 1,
+                price = 10
+            },
+            {
+                name = "burger_bun",
+                count = 1,
+                price = 10
+            },
+            {
+                name = "hotdog_bun",
+                count = 1,
+                price = 10
+            },
+            {
+                name = "burger_patty",
+                count = 1,
+                price = 10
+            },
+            {
+                name = "sausage",
+                count = 1,
+                price = 10
+            },
+            {
+                name = "lettuce",
+                count = 2,
+                price = 20
+            },
+            {
+                name = "tomato",
+                count = 2,
+                price = 20
+            },
+            {
+                name = "potato",
+                count = 2,
+                price = 20
+            },
+            {
+                name = "special_seasoning",
                 count = 2,
                 price = 20
             },
@@ -406,38 +669,357 @@ Config.BusinessZones = { -- This is where you can create business types, which g
                 name = "food", -- Set unique to other crafting types in this zone.
                 label = "Cook Food",
                 craftableItems = {
-                    {  name = "ammo-rifle", count = 1, required = { {name = "water", count = 1} }, action = "cook" },
+                    {
+                        name = "burger", count = 1,
+                        required = {
+                            {name = "burger_bun", count = 1},
+                            {name = "burger_patty", count = 1},
+                            {name = "lettuce", count = 1},
+                            {name = "tomato", count = 1},
+                        },
+                        action = "cook"
+                    },
+                    {
+                        name = "fries", count = 1,
+                        required = {
+                            {name = "potato", count = 1},
+                            {name = "special_seasoning", count = 1},
+                        },
+                        action = "cook"
+                    },
+                    {
+                        name = "hotdog", count = 1,
+                        required = {
+                            {name = "hotdog_bun", count = 1},
+                            {name = "sausage", count = 1},
+                        },
+                        action = "cook"
+                    },
                 }
             },
             {
                 name = "drink", -- Set unique to other crafting types in this zone.
                 label = "Dispense Drink",
                 craftableItems = {
-                    {  name = "ammo-9", count = 1, required = { {name = "water", count = 1} }, action = "dispense_drink" },
+                    {
+                        name = "sprunk",
+                        count = 1,
+                        required = {
+                            {name = "syrup_mix", count = 1},
+                            {name = "carbonated_water", count = 1},
+                        },
+                        action = "dispense_drink"
+                    },
+                    {
+                        name = "ecola",
+                        count = 1,
+                        required = {
+                            {name = "syrup_mix", count = 1},
+                            {name = "carbonated_water", count = 1},
+                        },
+                        action = "dispense_drink"
+                    },
+                    {
+                        name = "ecolalight",
+                        count = 1,
+                        required = {
+                            {name = "syrup_mix", count = 1},
+                            {name = "carbonated_water", count = 1},
+                        },
+                        action = "dispense_drink"
+                    },
+                }
+            }
+        }
+    },
+    --[[ -- Examples below.
+        {
+        name = "ls_firearms_and_supplies.",
+        label = "LS Firearms and supplies.",
+        callbacks = {
+            ownerCheck = function(source, businessId, purchaseType, price)
+                -- Add checks for licenses, etc. Whatever you want!
+                return true
+            end,
+            postOwner = function(source, businessId, purchaseType, price)
+                -- Add checks for licenses, etc. Whatever you want!
+            end,
+            purchaseCheck = function(source, businessId, cart, price)
+                -- Add checks for licenses, etc. Whatever you want!
+                return true
+            end,
+            postPurchase = function(source, businessId, cart, price)
+                -- Add checks for licenses, etc. Whatever you want!
+            end,
+        },
+        supplies = {
+            {
+                name = "WEAPON_BULLPUPSHOTGUN",
+                count = 1,
+                price = 300
+            },
+            {
+                name = "WEAPON_BZGAS",
+                count = 1,
+                price = 800
+            },
+            {
+                name = "WEAPON_CARBINERIFLE",
+                count = 1,
+                price = 50
+            }
+        },
+        craftingTypes = {
+            {
+                name = "repair",
+                label = "Repair Electronics",
+                craftableItems = {
+                    { name = "repaired_CARBINERIFLE", count = 1, required = { {name = "wood", count = 1} }, action = "repair" },
+                    { name = "repaired_BZGAS", count = 1, required = { {name = "wood", count = 1} }, action = "repair" },
                 }
             }
         }
     },
     {
-        name = "clothing_store", -- Set unique to other business zones.
-        label = "Clothing Store",
+        name = "electronics_store",
+        label = "Electronics Store",
+        callbacks = {
+            ownerCheck = function(source, businessId, purchaseType, price)
+                -- Add checks for licenses, etc. Whatever you want!
+                return true
+            end,
+            postOwner = function(source, businessId, purchaseType, price)
+                -- Add checks for licenses, etc. Whatever you want!
+            end,
+            purchaseCheck = function(source, businessId, cart, price)
+                -- Add checks for licenses, etc. Whatever you want!
+                return true
+            end,
+            postPurchase = function(source, businessId, cart, price)
+                -- Add checks for licenses, etc. Whatever you want!
+            end,
+        },
         supplies = {
             {
-                name = "shirt",
+                name = "smartphone",
+                count = 1,
+                price = 300
+            },
+            {
+                name = "laptop",
+                count = 1,
+                price = 800
+            },
+            {
+                name = "headphones",
+                count = 1,
+                price = 50
+            }
+        },
+        craftingTypes = {
+            {
+                name = "repair",
+                label = "Repair Electronics",
+                craftableItems = {
+                    { name = "repaired_smartphone", count = 1, required = { {name = "smartphone", count = 1} }, action = "repair" },
+                    { name = "repaired_laptop", count = 1, required = { {name = "laptop", count = 1} }, action = "repair" },
+                }
+            }
+        }
+    },
+    --]]
+    --[[
+    {
+        name = "pharmacy",
+        label = "Pharmacy",
+        callbacks = {
+            ownerCheck = function(source, businessId, purchaseType, price)
+                -- Add checks for licenses, etc. Whatever you want!
+                return true
+            end,
+            postOwner = function(source, businessId, purchaseType, price)
+                -- Add checks for licenses, etc. Whatever you want!
+            end,
+            purchaseCheck = function(source, businessId, cart, price)
+                -- Add checks for licenses, etc. Whatever you want!
+                return true
+            end,
+            postPurchase = function(source, businessId, cart, price)
+                -- Add checks for licenses, etc. Whatever you want!
+            end,
+        },
+        supplies = {
+            {
+                name = "painkiller",
                 count = 1,
                 price = 10
             },
             {
-                name = "pants",
+                name = "antibiotic",
                 count = 1,
-                price = 10
+                price = 25
             },
             {
-                name = "shoes",
+                name = "bandage",
+                count = 5,
+                price = 5
+            }
+        },
+        craftingTypes = {
+            {
+                name = "medication",
+                label = "Prepare Medications",
+                craftableItems = {
+                    { name = "custom_painkiller", count = 1, required = { {name = "painkiller", count = 1} }, action = "prepare" },
+                }
+            }
+        }
+    },
+    --]]
+    --[[
+    {
+        name = "jewelry_store",
+        label = "Jewelry Store",
+        callbacks = {
+            ownerCheck = function(source, businessId, purchaseType, price)
+                -- Add checks for licenses, etc. Whatever you want!
+                return true
+            end,
+            postOwner = function(source, businessId, purchaseType, price)
+                -- Add checks for licenses, etc. Whatever you want!
+            end,
+            purchaseCheck = function(source, businessId, cart, price)
+                -- Add checks for licenses, etc. Whatever you want!
+                return true
+            end,
+            postPurchase = function(source, businessId, cart, price)
+                -- Add checks for licenses, etc. Whatever you want!
+            end,
+        },
+        supplies = {
+            {
+                name = "necklace",
+                count = 1,
+                price = 200
+            },
+            {
+                name = "ring",
+                count = 1,
+                price = 150
+            },
+            {
+                name = "bracelet",
+                count = 1,
+                price = 100
+            }
+        },
+        craftingTypes = {
+            {
+                name = "custom_jewelry",
+                label = "Custom Jewelry",
+                craftableItems = {
+                    { name = "custom_necklace", count = 1, required = { {name = "necklace", count = 1} }, action = "customize" },
+                    { name = "custom_ring", count = 1, required = { {name = "ring", count = 1} }, action = "customize" },
+                }
+            }
+        }
+    },
+    --]]
+    --[[
+    {
+        name = "auto_parts_store",
+        label = "Auto Parts Store",
+        callbacks = {
+            ownerCheck = function(source, businessId, purchaseType, price)
+                -- Add checks for licenses, etc. Whatever you want!
+                return true
+            end,
+            postOwner = function(source, businessId, purchaseType, price)
+                -- Add checks for licenses, etc. Whatever you want!
+            end,
+            purchaseCheck = function(source, businessId, cart, price)
+                -- Add checks for licenses, etc. Whatever you want!
+                return true
+            end,
+            postPurchase = function(source, businessId, cart, price)
+                -- Add checks for licenses, etc. Whatever you want!
+            end,
+        },
+        supplies = {
+            {
+                name = "engine_oil",
+                count = 1,
+                price = 30
+            },
+            {
+                name = "tire",
+                count = 1,
+                price = 80
+            },
+            {
+                name = "battery",
+                count = 1,
+                price = 120
+            }
+        },
+        craftingTypes = {
+            {
+                name = "custom_parts",
+                label = "Custom Auto Parts",
+                craftableItems = {
+                    { name = "high_performance_tire", count = 1, required = { {name = "tire", count = 1} }, action = "upgrade" },
+                }
+            }
+        }
+    },
+    --]]
+    --[[
+    {
+        name = "bakery",
+        label = "Bakery",
+        callbacks = {
+            ownerCheck = function(source, businessId, purchaseType, price)
+                -- Add checks for licenses, etc. Whatever you want!
+                return true
+            end,
+            postOwner = function(source, businessId, purchaseType, price)
+                -- Add checks for licenses, etc. Whatever you want!
+            end,
+            purchaseCheck = function(source, businessId, cart, price)
+                -- Add checks for licenses, etc. Whatever you want!
+                return true
+            end,
+            postPurchase = function(source, businessId, cart, price)
+                -- Add checks for licenses, etc. Whatever you want!
+            end,
+        },
+        supplies = {
+            {
+                name = "bread",
+                count = 1,
+                price = 5
+            },
+            {
+                name = "cake",
+                count = 1,
+                price = 20
+            },
+            {
+                name = "cookies",
                 count = 1,
                 price = 10
             }
         },
-        craftingTypes = {},
+        craftingTypes = {
+            {
+                name = "bake_goods",
+                label = "Bake Goods",
+                craftableItems = {
+                    { name = "custom_cake", count = 1, required = { {name = "cake", count = 1} }, action = "decorate" },
+                    { name = "custom_bread", count = 1, required = { {name = "bread", count = 1} }, action = "season" },
+                }
+            }
+        }
     }
+    --]]
 }

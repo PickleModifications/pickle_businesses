@@ -39,10 +39,7 @@ function OpenCraftingSubmenu(businessId, locationId, craftableId)
                             rotation = location.rotation
                         })
                     end
-                    if not success then
-                        return ShowNotification(_L("business_crafting_failed"))
-                    end
-                    TriggerServerEvent("pickle_businesses:finishCrafting")
+                    TriggerServerEvent("pickle_businesses:finishCrafting", success)
                 end)
             end, businessId, locationId, craftableId)
         end
