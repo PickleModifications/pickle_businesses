@@ -26,11 +26,11 @@ Config.BusinessAdministration = {
 }
 
 Config.BusinessSettings = {
-    rentCron = "*/1 * * * *", -- https://overextended.dev/ox_lib/Modules/Cron/Server for more info.
-    salaryCron = "*/1 * * * *", -- https://overextended.dev/ox_lib/Modules/Cron/Server for more info.
+    rentCron = "* */1 * * *", -- https://overextended.dev/ox_lib/Modules/Cron/Server for more info.
+    salaryCron = "*/30 * * * *", -- https://overextended.dev/ox_lib/Modules/Cron/Server for more info.
     sellScale = 0.5, -- The multiplier to give back to the player when selling a business to the "state".
     maxLocations = 75, -- The maximum amount of locations a business can have.
-    recentSalesCapacity = 3, -- How many recent sales to store.
+    recentSalesCapacity = 10, -- How many recent sales to store.
 }
 
 Config.WebhookEvents = {
@@ -582,14 +582,20 @@ Config.DefaultCallbacks = { -- If undefined in zone.callbacks, these will be use
 }
 
 Config.PlaceableMarkets = { -- This is where you can create placeable market items.
-    ["metal"] = { -- ["item_name"] = { ... } 
+    ["food_trailer_1"] = { -- ["item_name"] = { ... } 
         model = `prop_food_van_02`, -- The model to display at the market location.
         zone = "food_store", -- The business zone to associate this with (Config.BusinessZones).
-    }
+    },
+    ["food_trailer_2"] = { -- ["item_name"] = { ... } 
+        model = `prop_food_van_01`, -- The model to display at the market location.
+        zone = "food_store", -- The business zone to associate this with (Config.BusinessZones).
+    },
 }
 
 Config.InteractOffsetModels = { -- These are used for placeable markets that have an abnormal offset, add more as needed.
+    [`prop_food_van_01`] = vector3(0.0, 0.0, 1.5),
     [`prop_food_van_02`] = vector3(0.0, 0.0, 1.5),
+    
 }
 
 Config.BusinessZones = { -- This is where you can create business types, which give access to zone-specific supplies and craftables.
@@ -598,6 +604,11 @@ Config.BusinessZones = { -- This is where you can create business types, which g
         label = "Food Store",
         callbacks = {
             ownerCheck = function(source, businessId, purchaseType, price)
+                local itemCount = Inventory.GetItemCount(source, "metal")
+                if not itemCount or itemCount < 1 then
+                    ShowNotification(source, "You need a food store license to purchase items from here.")
+                    return false
+                end
                 -- Add checks for licenses, etc. Whatever you want!
                 return true
             end,

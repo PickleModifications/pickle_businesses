@@ -24,11 +24,23 @@
     stack = true,
     description = ""
 },
+["burger"] = {
+    label = 'Burger',
+    weight = 1,
+    stack = true,
+    description = ""    
+},
 ["burger_bun"] = {
     label = 'burger bun',
     weight = 1,
     stack = true,
     description = ""
+},
+["hotdog"] = {
+    label = 'Hotdog',
+    weight = 1,
+    stack = true,
+    description = ""    
 },
 ["hotdog_bun"] = {
     label = ' hotdog bun',
@@ -72,3 +84,9 @@
     stack = true,
     description = ""
 },
+["fries"] = {
+    label = 'Fries',
+    weight = 1,
+    stack = true,
+    description = ""
+}
