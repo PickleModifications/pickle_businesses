@@ -1201,7 +1201,7 @@ RegisterNetEvent("pickle_businesses:purchaseBusiness", function(businessId, purc
     if not business then return end
     if business.owner then return ShowNotification(source, _L("business_already_owned")) end
     local cost = business[purchaseType]  
-    if business.price > GetPaymentMethodAmount(source, "cash") then
+    if cost > GetPaymentMethodAmount(source, "cash") then
         return ShowNotification(source, _L("insufficient_funds_" .. purchaseType, NumberWithCommas(cost)))
     end
     if not BusinessCallback("ownerCheck", source, businessId, purchaseType, cost) then return end
