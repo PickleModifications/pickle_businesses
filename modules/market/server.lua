@@ -514,10 +514,10 @@ RegisterNetEvent("pickle_businesses:acceptTrade", function(businessId, sku)
     local source = source
     local business = Businesses[businessId]
     if not business then return end
-    if not DoesPlayerHaveStorePermission(source, businessId, "items") then
-        ShowNotification(source, _L("no_permission"))
-        return
-    end
+    -- if not DoesPlayerHaveStorePermission(source, businessId, "items") then
+    --     ShowNotification(source, _L("no_permission"))
+    --     return
+    -- end
     StartStoreTradeTransaction(source, businessId, sku)
 end)
 

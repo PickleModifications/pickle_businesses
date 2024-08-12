@@ -46,7 +46,7 @@ end
 -- STASHES
 
 Inventory.RegisterStash = function(id, label, coords)
-    exports['qs-inventory']:RegisterStash(nil, id, Config.Storage.slots, Config.Storage.maxWeight)
+    exports['qs-inventory']:RegisterStash(id, Config.Storage.slots, Config.Storage.maxWeight)
 end
 
 function InitializeInventory()
