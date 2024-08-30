@@ -595,7 +595,6 @@ Config.PlaceableMarkets = { -- This is where you can create placeable market ite
 Config.InteractOffsetModels = { -- These are used for placeable markets that have an abnormal offset, add more as needed.
     [`prop_food_van_01`] = vector3(0.0, 0.0, 1.5),
     [`prop_food_van_02`] = vector3(0.0, 0.0, 1.5),
-    
 }
 
 Config.BusinessZones = { -- This is where you can create business types, which give access to zone-specific supplies and craftables.
@@ -604,11 +603,11 @@ Config.BusinessZones = { -- This is where you can create business types, which g
         label = "Food Store",
         callbacks = {
             ownerCheck = function(source, businessId, purchaseType, price)
-                local itemCount = Inventory.GetItemCount(source, "metal")
-                if not itemCount or itemCount < 1 then
-                    ShowNotification(source, "You need a food store license to purchase items from here.")
-                    return false
-                end
+                -- local itemCount = Inventory.GetItemCount(source, "metal")
+                -- if not itemCount or itemCount < 1 then
+                    -- ShowNotification(source, "You need a food store license to purchase items from here.")
+                    -- return false
+                -- end
                 -- Add checks for licenses, etc. Whatever you want!
                 return true
             end,
