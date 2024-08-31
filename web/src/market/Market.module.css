@@ -53,3 +53,7 @@
     overflow: hidden;
     pointer-events: none;
   }
+
+  .modal-container > div {
+    transition: all 0.2s;
+  }

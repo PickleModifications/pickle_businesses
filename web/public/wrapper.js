@@ -7,10 +7,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 market_buy: "Product Listings",
                 market_trade: "Trade Listings",
                 market_manage: "Manage Business",
+                market_buy_edit_title: "%s (SKU: %s)",
+                market_buy_edit_price: "Price",
+                market_buy_edit_quantity: "Quantity",
+                market_buy_edit_save: "Save Listing",
             },
             marketData: {
                 listings: [
-                    {sku: "500501", name: "Item 1", price: 10000000, quantity: 100000, metadata: {}},
+                    {sku: "500501", name: "BIG JUICY BANNANA AND ORANGE JUICE", price: 10000000, quantity: 100000, metadata: {}},
                     {sku: "500502", name: "Item 2", price: 200, quantity: 20, metadata: {}},
                     {sku: "500503", name: "Item 3", price: 300, quantity: 30, metadata: {}},
                     {sku: "500504", name: "Item 4", price: 400, quantity: 40, metadata: {}},

@@ -1,4 +1,4 @@
-import { Text, Menu, Group, Center, Burger, Container, Box, ScrollArea } from "@mantine/core";
+import { Text, Menu, Group, Center, Burger, Container } from "@mantine/core";
 import { useDisclosure } from '@mantine/hooks';
 import { IconChevronDown } from '@tabler/icons-react';
 import classes from "./Market.module.css";
@@ -96,7 +96,7 @@ export function Market() {
   let marketData = GetMarketData() as MarketData;
   UpdateListings(marketData?.listings || []);
   return (
-    <Group style={{position: "relative", flexDirection: "column", flexWrap: "nowrap", borderRadius: 5}} gap={0} w={900} h={600} bg={"dark.8"}>
+    <Group style={{position: "relative", flexDirection: "column", flexWrap: "nowrap", borderRadius: 5}} gap={0} w={900} h={550} bg={"dark.8"}>
       <HeaderMenu title={"Pickle's Shopping Center"} setPage={setPage} links={[
         { active: (page == "buy"), link: 'buy', label: Translate("market_buy") },
         { active: (page == "trade"), link: 'trade', label: Translate("market_trade") },
