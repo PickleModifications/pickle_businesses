@@ -45,3 +45,11 @@
   .linkLabel {
     margin-right: rem(5px);
   }
+
+  .modal-container {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    pointer-events: none;
+  }

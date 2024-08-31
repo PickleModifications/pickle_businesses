@@ -1,0 +1,57 @@
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(() => {
+        window.postMessage({ 
+            type: 'openMarket',
+            currency: { name: "EUR", symbol: "€" },
+            locale: {
+                market_buy: "Product Listings",
+                market_trade: "Trade Listings",
+                market_manage: "Manage Business",
+            },
+            marketData: {
+                listings: [
+                    {sku: "500501", name: "Item 1", price: 10000000, quantity: 100000, metadata: {}},
+                    {sku: "500502", name: "Item 2", price: 200, quantity: 20, metadata: {}},
+                    {sku: "500503", name: "Item 3", price: 300, quantity: 30, metadata: {}},
+                    {sku: "500504", name: "Item 4", price: 400, quantity: 40, metadata: {}},
+                    {sku: "500505", name: "Item 5", price: 500, quantity: 50, metadata: {}},
+                    {sku: "500506", name: "Item 6", price: 600, quantity: 60, metadata: {}},
+                    {sku: "500507", name: "Item 7", price: 700, quantity: 70, metadata: {}},
+                    {sku: "500508", name: "Item 8", price: 800, quantity: 80, metadata: {}},
+                    {sku: "500509", name: "Item 9", price: 900, quantity: 90, metadata: {}},
+                    {sku: "500510", name: "Item 10", price: 1000, quantity: 100, metadata: {}},
+                    {sku: "500501A", name: "Item 1", price: 100, quantity: 10, metadata: {}},
+                    {sku: "500502A", name: "Item 2", price: 200, quantity: 20, metadata: {}},
+                    {sku: "500503A", name: "Item 3", price: 300, quantity: 30, metadata: {}},
+                    {sku: "500504A", name: "Item 4", price: 400, quantity: 40, metadata: {}},
+                    {sku: "500505A", name: "Item 5", price: 500, quantity: 50, metadata: {}},
+                    {sku: "500506A", name: "Item 6", price: 600, quantity: 60, metadata: {}},
+                    {sku: "500507A", name: "Item 7", price: 700, quantity: 70, metadata: {}},
+                    {sku: "500508A", name: "Item 8", price: 800, quantity: 80, metadata: {}},
+                    {sku: "500509A", name: "Item 9", price: 900, quantity: 90, metadata: {}},
+                    {sku: "500510A", name: "Item 10", price: 1000, quantity: 100, metadata: {}},
+                    {sku: "500501B", name: "Item 1", price: 100, quantity: 10, metadata: {}},
+                    {sku: "500502B", name: "Item 2", price: 200, quantity: 20, metadata: {}},
+                    {sku: "500503B", name: "Item 3", price: 300, quantity: 30, metadata: {}},
+                    {sku: "500504B", name: "Item 4", price: 400, quantity: 40, metadata: {}},
+                    {sku: "500505B", name: "Item 5", price: 500, quantity: 50, metadata: {}},
+                    {sku: "500506B", name: "Item 6", price: 600, quantity: 60, metadata: {}},
+                    {sku: "500507B", name: "Item 7", price: 700, quantity: 70, metadata: {}},
+                    {sku: "500508B", name: "Item 8", price: 800, quantity: 80, metadata: {}},
+                    {sku: "500509B", name: "Item 9", price: 900, quantity: 90, metadata: {}},
+                    {sku: "500510B", name: "Item 10", price: 1000, quantity: 100, metadata: {}},
+                    {sku: "500501C", name: "Item 1", price: 100, quantity: 10, metadata: {}},
+                    {sku: "500502C", name: "Item 2", price: 200, quantity: 20, metadata: {}},
+                    {sku: "500503C", name: "Item 3", price: 300, quantity: 30, metadata: {}},
+                    {sku: "500504C", name: "Item 4", price: 400, quantity: 40, metadata: {}},
+                    {sku: "500505C", name: "Item 5", price: 500, quantity: 50, metadata: {}},
+                    {sku: "500506C", name: "Item 6", price: 600, quantity: 60, metadata: {}},
+                    {sku: "500507C", name: "Item 7", price: 700, quantity: 70, metadata: {}},
+                    {sku: "500508C", name: "Item 8", price: 800, quantity: 80, metadata: {}},
+                    {sku: "500509C", name: "Item 9", price: 900, quantity: 90, metadata: {}},
+                    {sku: "500510C", name: "Item 10", price: 1000, quantity: 100, metadata: {}},
+                ]
+            }
+        }, '*');
+    }, 100);
+});

@@ -4,15 +4,20 @@ import { IconChevronDown } from '@tabler/icons-react';
 import classes from "./Market.module.css";
 import { useState } from "react";
 
-import { Buy } from "./buy/Buy";    
+import { Buy, Item } from "./buy/Buy";    
 import { Trade } from "./trade/Trade";
 import { Manage } from "./manage/Manage";
+import { Translate, GetMarketData } from "../App";
 
 type Link = {
     active?: boolean;
     link: string;
     label: string;
     links?: Link[];
+}
+
+type MarketData = {
+  listings?: Item[];
 }
 
 function HeaderMenu({title, setPage, links} : {setPage: (pageId: string) => void, title: string, links: Link[]}) {
@@ -73,19 +78,34 @@ function HeaderMenu({title, setPage, links} : {setPage: (pageId: string) => void
   );
 }
 
+let currentListings : Item[] = [];
+
+export function UpdateListings(listings: Item[]) {
+  currentListings = listings;
+}
+
+export function HasPermission(permission: string) {
+  if (permission == "items") {
+    return true;
+  }
+  return false;
+}
 
 export function Market() {
-    const [page, setPage] = useState("buy");
-    return (
-        <Group style={{flexDirection: "column", flexWrap: "nowrap", borderRadius: 5}} gap={0} w={900} h={600} bg={"dark.8"}>
-            <HeaderMenu title={"Pickle's Shopping Center"} setPage={setPage} links={[
-                { active: (page == "buy"), link: 'buy', label: 'Product Listings' },
-                { active: (page == "trade"), link: 'trade', label: 'Trade Listings' },
-                { active: (page == "manage"), link: 'manage', label: 'Manage Business' },
-            ]}/>
-            {page == "buy" && <Buy/>}
-            {page == "trade" && <Trade/>}
-            {page == "manage" && <Manage/>}
-        </Group>
-    );
+  const [page, setPage] = useState("buy");
+  let marketData = GetMarketData() as MarketData;
+  UpdateListings(marketData?.listings || []);
+  return (
+    <Group style={{position: "relative", flexDirection: "column", flexWrap: "nowrap", borderRadius: 5}} gap={0} w={900} h={600} bg={"dark.8"}>
+      <HeaderMenu title={"Pickle's Shopping Center"} setPage={setPage} links={[
+        { active: (page == "buy"), link: 'buy', label: Translate("market_buy") },
+        { active: (page == "trade"), link: 'trade', label: Translate("market_trade") },
+        { active: (page == "manage"), link: 'manage', label: Translate("market_manage") },
+      ]}/>
+      {page == "buy" && <Buy currentListings={currentListings}/>}
+      {page == "trade" && <Trade/>}
+      {page == "manage" && <Manage/>}
+      <div id="market-modal-container" className={classes["modal-container"]}></div>
+    </Group>
+  );
 }

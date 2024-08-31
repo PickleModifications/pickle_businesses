@@ -1,47 +1,113 @@
-import { AspectRatio, BackgroundImage, Box, Container, Grid, Group, rem, ScrollArea, SimpleGrid, Text } from "@mantine/core";
+import { AspectRatio, Box, Container, Grid, Group, Overlay, Portal, rem, ScrollArea, SimpleGrid, Text, useMantineTheme } from "@mantine/core";
 import { useState } from "react";
+import { GetPriceString } from "../../App";
+import { IconEdit, IconShoppingCart, IconShoppingCartPlus, IconTrash } from "@tabler/icons-react";
+import { UpdateListings, HasPermission } from "../Market";
+import classes from "./Buy.module.css";
+import { Modal } from "../modal/Modal";
+import { useDisclosure } from "@mantine/hooks";
 
-type Listing = {
-    sku: string;
+export type Item = {
+    sku?: string;
     name: string;
-    price: number;
-    quantity: number;
-    metadata: any;
+    price?: number;
+    quantity?: number;
+    metadata?: any;
+    isPurchaseListing?: boolean;
 }
 
-function ItemDisplay({listing} : {listing: Listing}) {
-    return (
-        <AspectRatio ratio={1} style={{position: "relative", backgroundColor: "rgba(0, 0, 0, 0.25)"}}>
-            <Group h={"100%"} style={{
-                flexDirection: "row", 
-                alignContent:"space-between", 
-                backgroundImage: 'url("/item_placeholder.png")',
-                backgroundSize: "55%",
-                backgroundPositionX: "center",
-                backgroundPositionY: "30%",
-                backgroundRepeat: "no-repeat",
-                justifyContent: "",
-                }}>
-                    <Group gap={2} pl={5}>
-                        <Text style={{textAlign: "left"}} fz={"xs"}>{listing.price}</Text>
+function ItemDisplay({listing, style} : {listing: Item, style?: any}) {
+    const [editOpened, { open: openEdit, close: closeEdit }] = useDisclosure(false);
+    if (listing.isPurchaseListing && !HasPermission("items")) {
+        return (
+            <Box className={classes["purchase-listing"]}>
+                <Group gap={0} className={classes["cart"]} style={{zIndex: 1, position: "absolute", width: "100%", height: "100%", justifyContent: "center"}}>
+                    <IconShoppingCartPlus size={30} color={"white"} />
+                </Group>
+                <AspectRatio className={classes["item"]} ratio={1} style={{position: "relative", backgroundColor: "rgba(0, 0, 0, 0.25)"}}>
+                    <Group h={"100%"} style={{
+                        flexDirection: "row", 
+                        alignContent:"space-between", 
+                        backgroundImage: 'url("/item_placeholder.png")',
+                        backgroundSize: "65%",
+                        backgroundPositionX: "center",
+                        backgroundPositionY: "35%",
+                        backgroundRepeat: "no-repeat",
+                        justifyContent: "",
+                        }}>
+                        <Group gap={0} pl={5} mt={2}>
+                            <Text style={{textAlign: "left"}} fz={"xs"}>{GetPriceString(listing.price)}</Text>
+                        </Group>
+                        <Group w={"100%"} gap={0} style={{justifyContent: "flex-end"}}> 
+                            <Group pl={5} pb={2} pr={5} grow w={"100%"} gap={0} style={{flexWrap:"nowrap", justifyContent: "space-between"}}>
+                                <Text fz={"xs"} style={{textAlign: "right"}}>x{listing.quantity}</Text>
+                            </Group>
+                            <Group grow w={"100%"} style={{backgroundColor: "rgba(0, 0, 0, 0.25)"}}> 
+                                <Text fz={"xs"} style={{textAlign: "center"}}>{listing.name}</Text>
+                            </Group>
+                        </Group>
                     </Group>
-                <Group grow w={"100%"} gap={0} style={{justifyContent: "flex-end"}}> 
-                    <Text pr={5} fz={"xs"} style={{textAlign: "right"}}>x{listing.quantity}</Text>
-                    <Group grow w={"100%"} style={{backgroundColor: "rgba(0, 0, 0, 0.25)"}}> 
-                        <Text fz={"xs"} style={{textAlign: "center"}}>{listing.name}</Text>
+                </AspectRatio>
+            </Box>
+        );
+    }
+    return (
+        <Box>
+            <Modal opened={editOpened} close={closeEdit}>
+                <div>Your modal content</div>
+            </Modal>
+            <AspectRatio ratio={1} style={{position: "relative", backgroundColor: "rgba(0, 0, 0, 0.25)", ...style}}>
+                <Group h={"100%"} style={{
+                    flexDirection: "row", 
+                    alignContent:"space-between", 
+                    backgroundImage: 'url("/item_placeholder.png")',
+                    backgroundSize: "65%",
+                    backgroundPositionX: "center",
+                    backgroundPositionY: "35%",
+                    backgroundRepeat: "no-repeat",
+                    justifyContent: "",
+                    }}>
+                    <Group gap={0} pl={5} mt={2}>
+                        <Text style={{textAlign: "left"}} fz={"xs"}>{GetPriceString(listing.price)}</Text>
+                    </Group>
+                    <Group w={"100%"} gap={0} style={{justifyContent: "flex-end"}}> 
+                        <Group pl={5} pb={2} pr={5} grow w={"100%"} gap={0} style={{flexWrap:"nowrap", justifyContent: "space-between"}}>
+                            { HasPermission("items") ? <Group gap={0}>
+                                <IconEdit onClick={openEdit} style={{cursor: "pointer"}} size={15} color={"white"} />
+                                <IconTrash style={{cursor: "pointer"}} size={15} color={"white"} />
+                            </Group> : null }
+                            <Text fz={"xs"} style={{textAlign: "right"}}>x{listing.quantity}</Text>
+                        </Group>
+                        <Group grow w={"100%"} style={{backgroundColor: "rgba(0, 0, 0, 0.25)"}}> 
+                            <Text fz={"xs"} style={{textAlign: "center"}}>{listing.name}</Text>
+                        </Group>
                     </Group>
                 </Group>
-            </Group>
-        </AspectRatio>
+            </AspectRatio>
+        </Box>
     );
 }
 
-function Listings({listings} : {listings: Listing[]}) {
+function Listings({currentListings} : {currentListings?: Item[]}) {
+    const theme = useMantineTheme();
+    const [listings, setListings] = useState<Item[]>(currentListings || []);
+    window.addEventListener('message', (event) => {
+        if (event.data.type === 'updateListings') {
+            setListings(event.data.listings);
+        }
+    })
     return (
         <ScrollArea w={"100%"} style={{flex: 1}}>
-            <SimpleGrid cols={6} p={20}>
+            <SimpleGrid cols={5} p={20}>
                 {listings.map((listing, listingIndex) => (
-                    <ItemDisplay key={listingIndex} listing={listing} />
+                    <ItemDisplay key={listingIndex} listing={{
+                        sku: listing.sku,
+                        name: listing.name,
+                        price: listing.price,
+                        quantity: listing.quantity,
+                        metadata: listing.metadata,
+                        isPurchaseListing: true
+                    }}/>
                 ))}
             </SimpleGrid >
         </ScrollArea>
@@ -56,54 +122,17 @@ function Cart() {
     );
 }
 
-export function Buy() {
-    const [listings, setListings] = useState<Listing[]>([
-        {sku: "500501", name: "Item 1", price: 100, quantity: 10, metadata: {}},
-        {sku: "500502", name: "Item 2", price: 200, quantity: 20, metadata: {}},
-        {sku: "500503", name: "Item 3", price: 300, quantity: 30, metadata: {}},
-        {sku: "500504", name: "Item 4", price: 400, quantity: 40, metadata: {}},
-        {sku: "500505", name: "Item 5", price: 500, quantity: 50, metadata: {}},
-        {sku: "500506", name: "Item 6", price: 600, quantity: 60, metadata: {}},
-        {sku: "500507", name: "Item 7", price: 700, quantity: 70, metadata: {}},
-        {sku: "500508", name: "Item 8", price: 800, quantity: 80, metadata: {}},
-        {sku: "500509", name: "Item 9", price: 900, quantity: 90, metadata: {}},
-        {sku: "500510", name: "Item 10", price: 1000, quantity: 100, metadata: {}},
-        {sku: "500501", name: "Item 1", price: 100, quantity: 10, metadata: {}},
-        {sku: "500502", name: "Item 2", price: 200, quantity: 20, metadata: {}},
-        {sku: "500503", name: "Item 3", price: 300, quantity: 30, metadata: {}},
-        {sku: "500504", name: "Item 4", price: 400, quantity: 40, metadata: {}},
-        {sku: "500505", name: "Item 5", price: 500, quantity: 50, metadata: {}},
-        {sku: "500506", name: "Item 6", price: 600, quantity: 60, metadata: {}},
-        {sku: "500507", name: "Item 7", price: 700, quantity: 70, metadata: {}},
-        {sku: "500508", name: "Item 8", price: 800, quantity: 80, metadata: {}},
-        {sku: "500509", name: "Item 9", price: 900, quantity: 90, metadata: {}},
-        {sku: "500510", name: "Item 10", price: 1000, quantity: 100, metadata: {}},
-        {sku: "500501", name: "Item 1", price: 100, quantity: 10, metadata: {}},
-        {sku: "500502", name: "Item 2", price: 200, quantity: 20, metadata: {}},
-        {sku: "500503", name: "Item 3", price: 300, quantity: 30, metadata: {}},
-        {sku: "500504", name: "Item 4", price: 400, quantity: 40, metadata: {}},
-        {sku: "500505", name: "Item 5", price: 500, quantity: 50, metadata: {}},
-        {sku: "500506", name: "Item 6", price: 600, quantity: 60, metadata: {}},
-        {sku: "500507", name: "Item 7", price: 700, quantity: 70, metadata: {}},
-        {sku: "500508", name: "Item 8", price: 800, quantity: 80, metadata: {}},
-        {sku: "500509", name: "Item 9", price: 900, quantity: 90, metadata: {}},
-        {sku: "500510", name: "Item 10", price: 1000, quantity: 100, metadata: {}},
-        {sku: "500501", name: "Item 1", price: 100, quantity: 10, metadata: {}},
-        {sku: "500502", name: "Item 2", price: 200, quantity: 20, metadata: {}},
-        {sku: "500503", name: "Item 3", price: 300, quantity: 30, metadata: {}},
-        {sku: "500504", name: "Item 4", price: 400, quantity: 40, metadata: {}},
-        {sku: "500505", name: "Item 5", price: 500, quantity: 50, metadata: {}},
-        {sku: "500506", name: "Item 6", price: 600, quantity: 60, metadata: {}},
-        {sku: "500507", name: "Item 7", price: 700, quantity: 70, metadata: {}},
-        {sku: "500508", name: "Item 8", price: 800, quantity: 80, metadata: {}},
-        {sku: "500509", name: "Item 9", price: 900, quantity: 90, metadata: {}},
-        {sku: "500510", name: "Item 10", price: 1000, quantity: 100, metadata: {}},
-
-    ]);
+export function Buy({currentListings} : {currentListings?: Item[]}) {
     return (
-        <Group gap={0} style={{alignItems: "unset", height: "calc(100% - 56px)", flexWrap: "nowrap"}}>
-            <Listings listings={listings} />
+        <Group gap={0} style={{alignItems: "unset", width: "100%", height: "calc(100% - 56px)", flexWrap: "nowrap"}}>
+            <Listings currentListings={currentListings}/>
             <Cart/>
         </Group>
     );
 }
+
+window.addEventListener('message', (event) => {
+    if (event.data.type === 'updateListings') {
+        UpdateListings(event.data.listings);
+    }
+})
