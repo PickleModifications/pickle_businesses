@@ -9,6 +9,24 @@ export type Currency = {
   symbol: string
 }
 
+export type Item = {
+  sku?: string;
+  name: string;
+  price?: number;
+  quantity?: number; // Needs to cover count if not quantity.
+  weight?: number;
+  slot?: number;
+  durability?: number;
+  metadata?: any;
+  listingType?: string; // "inventory" | "server" | "market" | "market-view" | "trade" 
+}
+
+export type MarketData = {
+  listings?: Item[],
+  trades?: Item[],
+  inventory?: Item[],
+}
+
 type Translation = {
   [key: string]: string
 }
@@ -38,7 +56,7 @@ export function GetPriceString(price: any) {
   return formatter.format(safeNumber);
 }
 
-let marketData = {};
+let marketData: MarketData = {};
 
 export function GetMarketData() {
   return marketData;
@@ -46,6 +64,10 @@ export function GetMarketData() {
 
 function App() {
   const [opened, setOpened] = useState(false);
+  if (opened && !currency) { // Temp workaround for out-of-game rendering
+    setOpened(false);
+    window.postMessage({ type: 'refreshPage' }, '*');
+  }
   window.addEventListener('message', (event) => {
     if (event.data.type === 'openMarket') {
       currency = event.data.currency;

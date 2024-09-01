@@ -4,10 +4,10 @@ import { IconChevronDown } from '@tabler/icons-react';
 import classes from "./Market.module.css";
 import { useState } from "react";
 
-import { Buy, Item } from "./buy/Buy";    
+import { Buy } from "./buy/Buy";    
 import { Trade } from "./trade/Trade";
 import { Manage } from "./manage/Manage";
-import { Translate, GetMarketData } from "../App";
+import { Translate, GetMarketData, Item } from "../App";
 
 type Link = {
     active?: boolean;
@@ -18,6 +18,27 @@ type Link = {
 
 type MarketData = {
   listings?: Item[];
+}
+
+export function GetMaxQuantity(item: Item) {
+  let marketData = GetMarketData();
+  if (!marketData || !marketData.inventory || marketData.inventory.length == 0) {
+      return null;
+  }
+  let inventory = marketData.inventory;
+  let count = 0;
+  let items = [];
+  let name = item.name;
+  if ((item.durability || 100) < 100) {
+    return {count: 1, itemIndexes: [-1]};
+  }
+  for (let i=0; i<inventory.length; i++) {
+    if (inventory[i].name == name && (inventory[i].durability || 100) >= 100) {
+      count += inventory[i].quantity || 1;
+      items.push(i);
+    }
+  }
+  return {count: count, itemIndexes: items};
 }
 
 function HeaderMenu({title, setPage, links} : {setPage: (pageId: string) => void, title: string, links: Link[]}) {
