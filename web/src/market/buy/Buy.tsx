@@ -1,26 +1,32 @@
 import { AspectRatio, Box, Button, Container, Group, NumberInput, rem, ScrollArea, SimpleGrid, Text, TextInput } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { GetMarketData, GetPriceString, Item, Translate } from "../../App";
-import { IconEdit, IconPlus, IconSearch, IconShoppingCartPlus, IconTrash } from "@tabler/icons-react";
-import { UpdateListings, HasPermission, GetMaxQuantity } from "../Market";
+import { IconEdit, IconPlus, IconSearch, IconShoppingCartPlus, IconTrash, IconX } from "@tabler/icons-react";
+import { UpdateListings, HasPermission, GetMaxCount } from "../Market";
 import classes from "./Buy.module.css";
 import { Modal } from "../modal/Modal";
 import { useDisclosure } from "@mantine/hooks";
 
 function BuyEditModal({listing, opened, close} : {listing: Item, opened: boolean, close: () => void}) {
     if (!listing.sku) return null;
-    let maxQuantity = GetMaxQuantity(listing)?.count || 0;
+    let maxCount = (GetMaxCount(listing)?.count || 0) + (listing.count || 0);
     const [price, setPrice] = useState<number>(listing.price || 0);
-    const [quantity, setQuantity] = useState<number>(maxQuantity);
-    console.log(maxQuantity)
+    const [count, setCount] = useState<number>(listing.count || 0);
+    const closeWrapper = () => {
+        close();
+        setTimeout(() => {
+            setPrice(listing.price || 0);
+            setCount(listing.count || 0);
+        }, 200);
+    }
     return (
-        <Modal title={Translate("market_buy_edit_title", listing.name, listing.sku)} opened={opened} close={close}>
+        <Modal title={Translate("market_buy_edit_title", listing.name, listing.sku)} opened={opened} close={closeWrapper}>
             <Group gap={10} style={{ width: "100%", flexWrap: "nowrap"}}>
                 <ItemDisplay style={{width: 100}} listing={{
                     sku: listing.sku,
                     name: listing.name,
                     price: listing.price,
-                    quantity: listing.quantity,
+                    count: listing.count,
                     metadata: listing.metadata,
                     listingType: "market-view" 
                 }}/>
@@ -29,13 +35,13 @@ function BuyEditModal({listing, opened, close} : {listing: Item, opened: boolean
                         <NumberInput clampBehavior="strict" min={0} allowDecimal={false} label={Translate("market_buy_edit_price") + ":"} size="xs" value={price} onChange={(value) => { setPrice(Number(value)) }} />
                     </Group>
                     <Group pb={10} grow gap={0} style={{ width: "100%", flexWrap: "nowrap", justifyContent: "space-between" }}>
-                        <NumberInput clampBehavior="strict" min={1} allowDecimal={false} label={Translate("market_buy_edit_quantity") + ":"} size="xs" value={quantity} onChange={(value) => { setQuantity(Number(value)); }} />
+                        <NumberInput clampBehavior="strict" min={1} max={maxCount} allowDecimal={false} label={Translate("market_buy_edit_count") + ":"} size="xs" value={count} onChange={(value) => { setCount(Number(value)) }} />
                     </Group>
                 </Group>
             </Group>
             <Text fz={"xs"}>{Translate("market_buy_item_note")}</Text>
             <Text fz={"xs"}>{Translate("market_buy_item_note2")}</Text>
-            <Button style={{width: "100%", marginTop: 10}} onClick={close}>{Translate("market_buy_edit_save")}</Button>
+            <Button style={{width: "100%", marginTop: 10}} onClick={closeWrapper}>{Translate("market_buy_edit_save")}</Button>
         </Modal>
     );
 }
@@ -53,6 +59,7 @@ function BuyDeleteModal({listing, opened, close} : {listing: Item, opened: boole
 function ItemDisplayInfo({listing, openEdit, openDelete} : {listing: Item, openEdit?: () => void, openDelete?: () => void}) {
     return (
         <Group h={"100%"} style={{
+            userSelect: "none",
             flexDirection: "row", 
             alignContent:"space-between", 
             backgroundImage: 'url("/item_placeholder.png")',
@@ -71,7 +78,7 @@ function ItemDisplayInfo({listing, openEdit, openDelete} : {listing: Item, openE
                         <IconEdit onClick={openEdit} style={{cursor: "pointer"}} size={15} color={"white"} />
                         <IconTrash onClick={openDelete} style={{cursor: "pointer"}} size={15} color={"white"} />
                     </Group> : null }
-                    <Text fz={"xs"} style={{textAlign: "right"}}>x{listing.quantity}</Text>
+                    <Text fz={"xs"} style={{textAlign: "right"}}>x{listing.count}</Text>
                 </Group>
                 <Group grow w={"100%"} style={{backgroundColor: "rgba(0, 0, 0, 0.25)"}}> 
                     <Text pl={4} pr={4} fz={"xs"} style={{ textOverflow: "ellipsis", textWrap:"nowrap", overflow: "hidden", textAlign: "center"}}>{listing.name}</Text>
@@ -131,7 +138,7 @@ function SelectInventoryItem({onSelect} : {onSelect: (index: number) => void}) {
                 {inventory.map((listing, listingIndex) => (
                     <ItemDisplay onClick={() => {onSelect(listingIndex)}} style={{cursor: "pointer"}} key={listingIndex} listing={{
                         name: listing.name,
-                        quantity: listing.quantity,
+                        count: listing.count,
                         metadata: listing.metadata,
                         listingType: "market-view"
                     }}/>
@@ -153,10 +160,10 @@ function InventoryItemSelected({index, onClick, onClose} : {index: number, onCli
         onClose();
         return (<></>);
     }
-    let maxQuantity = GetMaxQuantity(listing)?.count || 0;
+    let maxCount = GetMaxCount(listing)?.count || 0;
     const [price, setPrice] = useState<number>(listing.price || 0);
-    const [quantity, setQuantity] = useState<number>(maxQuantity);
-    if (maxQuantity == 0) {
+    const [count, setCount] = useState<number>(maxCount);
+    if (maxCount == 0) {
         onClose();
         return (<></>);
     }
@@ -165,7 +172,7 @@ function InventoryItemSelected({index, onClick, onClose} : {index: number, onCli
             <Group gap={10} style={{ width: "100%", flexWrap: "nowrap"}}>
                 <ItemDisplay onClick={onClick} style={{width: 100, cursor: "pointer"}} listing={{
                     name: listing.name,
-                    quantity: listing.quantity,
+                    count: listing.count,
                     metadata: listing.metadata,
                     listingType: "market-view"
                 }}/>
@@ -174,7 +181,7 @@ function InventoryItemSelected({index, onClick, onClose} : {index: number, onCli
                         <NumberInput clampBehavior="strict" min={0} allowDecimal={false} label={Translate("market_buy_edit_price") + ":"} size="xs" value={price} onChange={(value) => { setPrice(Number(value)); }} />
                     </Group>
                     <Group pb={10} grow gap={0} style={{ width: "100%", flexWrap: "nowrap", justifyContent: "space-between" }}>
-                        <NumberInput clampBehavior="strict" min={1} allowDecimal={false} label={Translate("market_buy_edit_quantity") + ":"} size="xs" value={quantity} max={maxQuantity} onChange={(value) => { setQuantity(Number(value)); }} />
+                        <NumberInput clampBehavior="strict" min={1} allowDecimal={false} label={Translate("market_buy_edit_count") + ":"} size="xs" value={count} max={maxCount} onChange={(value) => { setCount(Number(value)); }} />
                     </Group>
                 </Group>
             </Group>
@@ -188,7 +195,7 @@ function InventoryItemSelected({index, onClick, onClose} : {index: number, onCli
 
 function BuyAddItem() {
     const [addOpened, { open: openAdd, close: closeAdd }] = useDisclosure(false);
-    const [index, setIndex] = useState<number>(0);
+    const [index, setIndex] = useState<number>(-1);
     const addCloseWrapper = () => {
         closeAdd();
         setTimeout(() => {
@@ -218,20 +225,10 @@ function BuyAddItem() {
     );
 }
 
-function Listings({currentListings} : {currentListings?: Item[]}) {
-    const [listings, setListings] = useState<Item[]>(currentListings || []);
+function Listings({listings, addListing} : {listings: Item[], addListing?: (sku: string) => void}) {
     const [filter, setFilter] = useState<string>("");
-    const [filteredListings, setFilteredListings] = useState<Item[]>([]);
-    useEffect(() => {
-        console.log("Listings updated", new Date().getMilliseconds());
-        const reallyFilteredListings = listings.filter((listing) => listing.name.toLowerCase().includes(filter.toLowerCase()));
-        setFilteredListings(reallyFilteredListings);
-    }, [listings, filter]);
-    window.addEventListener('message', (event) => {
-        if (event.data.type === 'updateListings') {
-            setListings(event.data.listings);
-        }
-    })
+    let filteredListings = listings.filter((listing) =>listing.name.toLowerCase().includes(filter.toLowerCase()));
+
     return (
         <Group miw={"70%"} gap={0} style={{flexDirection: "column"}}>
             <Group pl={20} pr={20} pt={10} pb={10} w={"100%"} style={{justifyContent: "space-between"}}>
@@ -244,16 +241,16 @@ function Listings({currentListings} : {currentListings?: Item[]}) {
 
             <ScrollArea w={"100%"} style={{flex: 1}}>
                 <SimpleGrid cols={HasPermission("items") ? 7 : 5} pl={20} pr={20} pb={20}>
-                    <BuyAddItem/>
+                    {HasPermission("items") && <BuyAddItem/>}
                     {filteredListings.map((listing, listingIndex) => (
                         <ItemDisplay key={listingIndex} listing={{
                             sku: listing.sku,
                             name: listing.name,
                             price: listing.price,
-                            quantity: listing.quantity,
+                            count: listing.count,
                             metadata: listing.metadata,
                             listingType: "market"
-                        }}/>
+                        }} onClick={() => {(addListing && listing.sku && addListing(listing.sku))}}/>
                     ))}
                 </SimpleGrid >
             </ScrollArea>
@@ -261,19 +258,85 @@ function Listings({currentListings} : {currentListings?: Item[]}) {
     );
 }
 
-function Cart() {
-    return (
-        <Group style={{flexDirection: "column", alignItems: "flex-start", borderLeft: "2px rgba(255, 255, 255, 0.1) solid", borderBottomRightRadius: 5}} p={10} grow miw={"30%"} bg={"dark.8"}>
-            Cart 
+function Cart({listings, cart, updateCart} : {listings: Item[], cart: Item[], updateCart: (cart: Item[]) => void}) {
+    const updateQuantity = (sku: string, quantity: number) => {
+        let newCart = cart.map((cartListing) => {
+            if (cartListing.sku == sku) {
+                return {...cartListing, quantity: quantity};
+            }
+            return cartListing;
+        });
+        updateCart(newCart);
+    }
+    const removeItem = (sku: string) => {
+        let newCart = cart.filter((cartListing) => cartListing.sku != sku);
+        updateCart(newCart);
+    }
+    return (cart.length > 0 ? (
+        <Group gap={0} style={{flexDirection: "column", borderLeft: "2px rgba(255, 255, 255, 0.1) solid", borderBottomRightRadius: 5}} miw={"30%"}>
+            <ScrollArea style={{flex: 1}}>
+                <Group h={"100%"}  wrap="nowrap" gap={0} pos={"relative"} style={{flexDirection: "column", alignItems: "flex-start"}} bg={"dark.8"}>
+                    {cart.map((cartListing, cartListingIndex) => {
+                        let listing = listings?.find((listing) => listing.sku == cartListing.sku);
+                        if (!listing) return null;
+                        return (
+                            <Group pl={10} pr={10} wrap="nowrap" justify="flex-start">
+                                <NumberInput size={"xs"} clampBehavior="strict" min={1} max={listing.count} allowDecimal={false} value={cartListing.quantity} onChange={(value) => { (cartListing.sku && updateQuantity(cartListing.sku, Number(value))) }} />
+                                <img width={40} height={40} src="/item_placeholder.png"/>
+                                <Group gap={0} w={"100%"} align="flex-start" style={{flexDirection: "column"}}>
+                                    <Text w={80} fw={600} fz={"xs"} style={{ textOverflow: "ellipsis", textWrap:"nowrap", overflow: "hidden"}}>{listing.name}</Text>
+                                    <Text fz={10}>{GetPriceString((listing.price || 0) * (cartListing.quantity || 0))}</Text>
+                                </Group>
+                                <IconX size={50} color={"white"} style={{ cursor: "pointer"}} onClick={() => {(cartListing.sku && removeItem(cartListing.sku))}}/>
+                            </Group>
+                        );
+                    })}
+                </Group>
+            </ScrollArea>
+            <Group gap={5} p={10} w={"100%"} style={{flexDirection: "column"}} bg={"dark.8"}>
+                <Group gap={0} style={{justifyContent: "space-between", width: "100%"}}>
+                    <Text fw={600} fz={"md"}>{Translate("market_buy_total")}:</Text>
+                    <Text fw={600} fz={"md"}>{GetPriceString(cart.reduce((total, cartListing) => {
+                        let listing = listings?.find((listing) => listing.sku == cartListing.sku);
+                        if (!listing) return total;
+                        return total + ((listing.price || 0) * (cartListing.quantity || 0));
+                    }, 0))}</Text>
+                </Group>
+                <Button fullWidth onClick={() => {updateCart([])}}>{Translate("market_buy_purchase", cart.length + "")}</Button>
+            </Group>
         </Group>
-    );
+    ) : (
+        <Group gap={0} style={{flexDirection: "column", justifyContent:"center", borderLeft: "2px rgba(255, 255, 255, 0.1) solid", borderBottomRightRadius: 5}} miw={"30%"}>
+            <IconShoppingCartPlus size={40} color={"white"} />
+            <Text fz={"md"} fw={600}>{Translate("market_buy_cart_empty")}</Text>
+            <Text fz={"xs"} fw={400}>{Translate("market_buy_cart_empty_desc")}</Text>
+        </Group>
+    ));
 }
 
 export function Buy({currentListings} : {currentListings?: Item[]}) {
+    const [listings, setListings] = useState<Item[]>(currentListings || []);
+    const [cart, setCart] = useState<Item[]>([]);
+    window.addEventListener('message', (event) => {
+        if (event.data.type === 'updateListings') {
+            setListings(event.data.listings);
+        }
+    })
     return (
         <Group gap={0} style={{alignItems: "unset", width: "100%", height: "calc(100% - 56px)", flexWrap: "nowrap"}}>
-            <Listings currentListings={currentListings}/>
-            {!HasPermission("items") && <Cart/>}
+            <Listings addListing={(sku)=> {
+                let listing = currentListings?.find((listing) => listing.sku == sku);
+                if (!listing) return;
+                let cartListing = cart.find((cartListing) => cartListing.sku == sku);
+                if (cartListing) {
+                    if (cartListing.quantity == listing.count) return;
+                    cartListing.quantity = (cartListing.quantity || 0) + 1;
+                    setCart([...cart]);
+                    return;
+                }
+                setCart([...cart, {sku: sku, name: listing.name, quantity: 1}]);
+            }} listings={listings}/>
+            {!HasPermission("items") && <Cart listings={listings} cart={cart} updateCart={setCart}/>}
         </Group>
     );
 }

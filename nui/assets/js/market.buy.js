@@ -22,7 +22,7 @@ MarketBuy.GetListingsHtml = function() {
         <div class="market-buy-item">
             <div style="background-image: url(${Market.data.config.img_folder + "/" + store_listings[i].name}.png);">
                 <div>${numberWithCommas(store_listings[i].price)}</div>
-                <div>x${store_listings[i].quantity}</div>
+                <div>x${store_listings[i].count}</div>
                 <div>${Market.GetItemLabel(store_listings[i].name)}</div>
                 ${hasPermission ? manageItemHtml : ""}
             </div>
@@ -127,8 +127,8 @@ MarketBuy.Cart_UpdateTotalPrice = function() {
             return;
         }
         let listing = Market.data.store_listings[listingId];
-        let quantity = $(`#checkout-listing-${sku} .quantity-input`).val();
-        total += listing.price * quantity;
+        let count = $(`#checkout-listing-${sku} .count-input`).val();
+        total += listing.price * count;
     });
     $("#market-container .checkout-area .total-price").html(numberWithCommas(total));
     $("#market-container .checkout-area .purchase").html(_L("market_buy_purchase_amount", $("#market-container .buy.container > .checkout-area > .checkout-list > .checkout-item").length));
@@ -148,8 +148,8 @@ MarketBuy.Cart_AddListing = function(listingId) {
     let listingHtml = `
     <div class="checkout-item" id="checkout-listing-${listing.sku}">
         <div>
-            <div class="quantity-module">
-                <input class="quantity-input" type="number" min="1" max="${listing.quantity}" value="1" style="margin-left: 1vw; text-align: center; width: 2vw; height: 1vw; color: white; background-color: var(--color3); border: none; padding: 0;"></input>
+            <div class="count-module">
+                <input class="count-input" type="number" min="1" max="${listing.count}" value="1" style="margin-left: 1vw; text-align: center; width: 2vw; height: 1vw; color: white; background-color: var(--color3); border: none; padding: 0;"></input>
             </div>    
             <div style="background-image: url(${Market.data.config.img_folder + "/" + listing.name}.png);">
             </div>
@@ -170,7 +170,7 @@ MarketBuy.Cart_AddListing = function(listingId) {
         $("#market-container .buy.container > .checkout-area > .checkout-summary").removeClass("empty");
     }
     $("#market-container .buy.container > .checkout-area > .checkout-list").append(listingHtml);
-    MarketBuy.Cart_UpdateListingQuantity(listing.sku);
+    MarketBuy.Cart_UpdateListingCount(listing.sku);
     MarketBuy.Cart_UpdateTotalPrice();
     tippy(`#checkout-listing-${listing.sku} > div:nth-child(2)`, {
         allowHTML: true,
@@ -196,30 +196,30 @@ MarketBuy.Cart_RefreshListings = function() {
             return;
         }
         let listing = Market.data.store_listings[listingId];
-        let quantity = $(`#checkout-listing-${sku} .quantity-input`).val();
-        $(`#checkout-listing-${sku} .quantity-input`).attr("max", listing.quantity);
-        if (listing.quantity < quantity) {
-            $(`#checkout-listing-${sku} .quantity-input`).val(listing.quantity);
+        let count = $(`#checkout-listing-${sku} .count-input`).val();
+        $(`#checkout-listing-${sku} .count-input`).attr("max", listing.count);
+        if (listing.count < count) {
+            $(`#checkout-listing-${sku} .count-input`).val(listing.count);
         }
-        MarketBuy.Cart_UpdateListingQuantity(sku)
+        MarketBuy.Cart_UpdateListingCount(sku)
     });
     MarketBuy.Cart_UpdateTotalPrice();
     MarketBuy.Cart_EmptyCheck();
 }
 
-MarketBuy.Cart_UpdateListingQuantity = function(sku) {
+MarketBuy.Cart_UpdateListingCount = function(sku) {
     let listingId = Market.data.store_listings.findIndex(x => x.sku == sku);
     let listing = Market.data.store_listings[listingId];
     if ($(`#checkout-listing-${sku}`).length < 1) {
         $.notify(_L("market_buy_listing_invalid"), {color: "#fff", background: "#D44950"});
         return;
     }
-    let quantity = $(`#checkout-listing-${sku} .quantity-input`).val();
-    if (quantity < 1) {
+    let count = $(`#checkout-listing-${sku} .count-input`).val();
+    if (count < 1) {
         MarketBuy.Cart_RemoveListing(sku);
         return;
     }
-    $(`#checkout-listing-${sku} .price`).html(`${numberWithCommas(Market.data.store_listings[listingId].price * quantity)}`);
+    $(`#checkout-listing-${sku} .price`).html(`${numberWithCommas(Market.data.store_listings[listingId].price * count)}`);
     MarketBuy.Cart_UpdateTotalPrice();
 }
 
@@ -229,10 +229,10 @@ MarketBuy.Cart_Submit = function() {
     for (let i=0; i<elements.length; i++) {
         let sku = $(elements[i]).attr("id").split("-")[2];
         let listing = Market.data.store_listings.find(x => x.sku == sku);
-        let quantity = Number($(`#checkout-listing-${sku} .quantity-input`).val());
+        let count = Number($(`#checkout-listing-${sku} .count-input`).val());
         cart.push({
             sku: listing.sku,
-            quantity: quantity,
+            count: count,
         });
     }
     let paymentMethod = $("#market-container .buy.container > .checkout-area .payment-method").val();
@@ -299,8 +299,8 @@ MarketBuy.AddItemPrompt_SelectItem = function(itemId) {
             </div>
         </div>
     `);
-    $("#market-container .buy.container > .prompt.add-item .quantity-input").attr("max", stackedItems.count).val(stackedItems.count);
-    $("#market-container .buy.container > .prompt .quantity-text").html(_L("market_quantity_max", stackedItems.count) + ":");
+    $("#market-container .buy.container > .prompt.add-item .count-input").attr("max", stackedItems.count).val(stackedItems.count);
+    $("#market-container .buy.container > .prompt .count-text").html(_L("market_count_max", stackedItems.count) + ":");
     tippy('.prompt.add-item .selected-item .market-buy-item', {
         allowHTML: true,
         theme: "market-theme",
@@ -343,21 +343,21 @@ MarketBuy.AddItemPrompt_Submit = function() {
     let item = Market.data.player_inventory[itemId];
     let stackedItems = Market.GetStackableItems(itemId);
     let price = $("#market-container .buy.container > .prompt .price-input").val();
-    let quantity = $("#market-container .buy.container > .prompt .quantity-input").val();
-    if (price < 0 || quantity < 1) {
+    let count = $("#market-container .buy.container > .prompt .count-input").val();
+    if (price < 0 || count < 1) {
         $.notify(_L("market_buy_listing_addfail"), {color: "#fff", background: "#D44950"});
         return;
     }
-    if (quantity > stackedItems.count) {
+    if (count > stackedItems.count) {
         $.notify(_L("market_buy_listing_addfail"), {color: "#fff", background: "#D44950"});
         return;
     }
     let data = {
         item: item,
         price: price,
-        quantity: quantity,
+        count: count,
     }
-    $.post("https://pickle_businesses/marketBuyAction", JSON.stringify({item: item, price: Number(price), quantity: Number(quantity), action: "add_item"}));
+    $.post("https://pickle_businesses/marketBuyAction", JSON.stringify({item: item, price: Number(price), count: Number(count), action: "add_item"}));
     $("#market-container .buy.container > .prompt").css("display", "flex").fadeOut(250);
 }
 
@@ -384,8 +384,8 @@ MarketBuy.AddItemPrompt = function() {
                                 <input class="price-input" type="number" min="0" value="0" style="margin-left: auto; width: 5vw; height: 1vw; color: white; background-color: var(--color2); border: none; padding: 0 0.25vw;"></input>
                             </div>
                             <div style="display: flex; align-items: center; margin-top: 0.5vw">
-                                <div class="quantity-text" style="margin-right: 0.25vw; font-size:0.75vw;">${_L("market_quantity")}:</div>
-                                <input class="quantity-input" type="number" min="1" value="1" style="margin-left: auto; width: 5vw; height: 1vw; color: white; background-color: var(--color2); border: none; padding: 0 0.25vw;"></input>
+                                <div class="count-text" style="margin-right: 0.25vw; font-size:0.75vw;">${_L("market_count")}:</div>
+                                <input class="count-input" type="number" min="1" value="1" style="margin-left: auto; width: 5vw; height: 1vw; color: white; background-color: var(--color2); border: none; padding: 0 0.25vw;"></input>
                             </div>
                             <div class="italic" style="margin-top: 0.5vw;">${_L("market_buy_newlisting_note1")}</div>
                             <div class="italic">${_L("market_buy_newlisting_note2")}</div>
@@ -416,9 +416,9 @@ MarketBuy.AddItemPrompt = function() {
 MarketBuy.EditItemPrompt = function(listingId) {
     let listing = Market.data.store_listings[listingId];
     if (listing == undefined || listing == null) return;
-    let maxQuantity = listing.quantity; // TODO: Add amount in player inventory to maximum.
+    let maxCount = listing.count; // TODO: Add amount in player inventory to maximum.
     let addableCount = Market.GetListingItemInfo(listing);
-    maxQuantity += addableCount;
+    maxCount += addableCount;
 
     $("#market-container .buy.container > .prompt").remove()
     $("#market-container .buy.container").prepend(`
@@ -435,7 +435,7 @@ MarketBuy.EditItemPrompt = function(listingId) {
                             <div class="market-buy-item">
                                 <div style="background-image: url(${Market.data.config.img_folder + "/" + listing.name}.png);">
                                     <div></div>
-                                    <div>x${listing.quantity}</div>
+                                    <div>x${listing.count}</div>
                                     <div>${Market.GetItemLabel(listing.name)}</div>
                                 </div>
                             </div>
@@ -446,11 +446,11 @@ MarketBuy.EditItemPrompt = function(listingId) {
                                 <input class="price-input" type="number" min="0" value="${listing.price || 0}" style="margin-left: auto; width: 5vw; height: 1vw; color: white; background-color: var(--color2); border: none; padding: 0 0.25vw;"></input>
                             </div>
                             <div style="display: flex; align-items: center; margin-top: 0.5vw">
-                                <div class="quantity-text" style="margin-right: 0.25vw; font-size:0.75vw;">${_L("market_quantity")}:</div>
-                                <input class="quantity-input" type="number" min="0" max="${maxQuantity}" value="${listing.quantity}" style="margin-left: auto; width: 5vw; height: 1vw; color: white; background-color: var(--color2); border: none; padding: 0 0.25vw;"></input>
+                                <div class="count-text" style="margin-right: 0.25vw; font-size:0.75vw;">${_L("market_count")}:</div>
+                                <input class="count-input" type="number" min="0" max="${maxCount}" value="${listing.count}" style="margin-left: auto; width: 5vw; height: 1vw; color: white; background-color: var(--color2); border: none; padding: 0 0.25vw;"></input>
                             </div>
                             <div class="italic" style="margin-top: 0.5vw;">Note: You cannot stack items that have been damaged.</div>
-                            <div class="italic">If selling unique and/or damaged items, the quantity must be set to 1 to preserve the data.</div>
+                            <div class="italic">If selling unique and/or damaged items, the count must be set to 1 to preserve the data.</div>
                         </div>
                     </div>            
                     <div style="margin-top: 1vw; margin-bottom: 0.5vw; display:flex; align-items: center; justify-content: center;">
@@ -477,16 +477,16 @@ MarketBuy.EditItemPrompt_Submit = function(listingId, deleteItem) {
     let listing = Market.data.store_listings[listingId];
     if (!listing) return;
     if (deleteItem) {
-        $.post("https://pickle_businesses/marketBuyAction", JSON.stringify({sku: listing.sku, price: Number(0), quantity: Number(0), action: "edit_item"}));
+        $.post("https://pickle_businesses/marketBuyAction", JSON.stringify({sku: listing.sku, price: Number(0), count: Number(0), action: "edit_item"}));
         return;
     }
     let price = $("#market-container .buy.container > .prompt .price-input").val();
-    let quantity = $("#market-container .buy.container > .prompt .quantity-input").val();
-    if (price < 0 || quantity < 0) {
+    let count = $("#market-container .buy.container > .prompt .count-input").val();
+    if (price < 0 || count < 0) {
         $.notify(_L("market_buy_listing_editfail"), {color: "#fff", background: "#D44950"});
         return;
     }
-    $.post("https://pickle_businesses/marketBuyAction", JSON.stringify({sku: listing.sku, price: Number(price), quantity: Number(quantity), action: "edit_item"}));
+    $.post("https://pickle_businesses/marketBuyAction", JSON.stringify({sku: listing.sku, price: Number(price), count: Number(count), action: "edit_item"}));
     $("#market-container .buy.container > .prompt").css("display", "flex").fadeOut(250);
 }
 
@@ -518,7 +518,7 @@ $(document).ready(function() {
     });
 
     $('#market-container').on('propertychange input', '.checkout-item input', function (e) {
-        MarketBuy.Cart_UpdateListingQuantity($(this).parent().parent().parent().attr("id").split("-")[2], $(this).val())
+        MarketBuy.Cart_UpdateListingCount($(this).parent().parent().parent().attr("id").split("-")[2], $(this).val())
     });
 
     $('#market-container').on('mousedown', '.buy.container > .content > .listings > .market-buy-item', function(event) {

@@ -20,7 +20,7 @@ type MarketData = {
   listings?: Item[];
 }
 
-export function GetMaxQuantity(item: Item) {
+export function GetMaxCount(item: Item) {
   let marketData = GetMarketData();
   if (!marketData || !marketData.inventory || marketData.inventory.length == 0) {
       return null;
@@ -30,11 +30,11 @@ export function GetMaxQuantity(item: Item) {
   let items = [];
   let name = item.name;
   if ((item.durability || 100) < 100) {
-    return {count: 1, itemIndexes: [-1]};
+    return {count: item.count, itemIndexes: [-1]};
   }
   for (let i=0; i<inventory.length; i++) {
     if (inventory[i].name == name && (inventory[i].durability || 100) >= 100) {
-      count += inventory[i].quantity || 1;
+      count += inventory[i].count || 1;
       items.push(i);
     }
   }
@@ -107,7 +107,7 @@ export function UpdateListings(listings: Item[]) {
 
 export function HasPermission(permission: string) {
   if (permission == "items") {
-    return true;
+    return false;
   }
   return false;
 }

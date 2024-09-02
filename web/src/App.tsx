@@ -13,7 +13,8 @@ export type Item = {
   sku?: string;
   name: string;
   price?: number;
-  quantity?: number; // Needs to cover count if not quantity.
+  count?: number;
+  quantity?: number;
   weight?: number;
   slot?: number;
   durability?: number;
