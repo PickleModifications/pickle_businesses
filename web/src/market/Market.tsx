@@ -5,9 +5,9 @@ import classes from "./Market.module.css";
 import { useState } from "react";
 
 import { Buy } from "./buy/Buy";    
-import { Trade } from "./trade/Trade";
+import { Trade, TradeListing } from "./trade/Trade";
 import { Manage } from "./manage/Manage";
-import { Translate, GetMarketData, Item } from "../App";
+import { Translate, Item } from "../App";
 
 type Link = {
     active?: boolean;
@@ -16,8 +16,17 @@ type Link = {
     links?: Link[];
 }
 
-type MarketData = {
-  listings?: Item[];
+export type MarketData = {
+  listings?: Item[],
+  trades?: TradeListing[],
+  inventory?: Item[],
+  cart?: Item[]
+}
+
+let marketData: MarketData = {};
+
+export function GetMarketData() {
+  return marketData;
 }
 
 export function GetMaxCount(item: Item) {
@@ -99,34 +108,46 @@ function HeaderMenu({title, setPage, links} : {setPage: (pageId: string) => void
   );
 }
 
-let currentListings : Item[] = [];
-
-export function UpdateListings(listings: Item[]) {
-  currentListings = listings;
-}
-
 export function HasPermission(permission: string) {
   if (permission == "items") {
-    return false;
+    return true;
   }
   return false;
 }
 
 export function Market() {
-  const [page, setPage] = useState("buy");
-  let marketData = GetMarketData() as MarketData;
-  UpdateListings(marketData?.listings || []);
-  return (
+  const [page, setPage] = useState("trade");
+  const [marketData, setMarketData] = useState<MarketData>({listings: [], trades: [], inventory: []});
+  const [opened, setOpened] = useState(false);
+  window.addEventListener('message', (event) => {
+    if (event.data.type === 'openMarket') {
+      setMarketData(event.data.marketData);
+      setOpened(true);
+    }
+  });
+  window.addEventListener('message', (event) => {
+    if (event.data.type === 'updateListings') {
+      marketData.listings = event.data.listings;
+      setMarketData(marketData);
+    }
+  })
+  window.addEventListener('message', (event) => {
+    if (event.data.type === 'updateCart') {
+      marketData.cart = event.data.cart;
+      setMarketData(marketData);
+    }
+  })
+  return (opened ? (
     <Group style={{position: "relative", flexDirection: "column", flexWrap: "nowrap", borderRadius: 5}} gap={0} w={900} h={550} bg={"dark.8"}>
       <HeaderMenu title={"Pickle's Shopping Center"} setPage={setPage} links={[
         { active: (page == "buy"), link: 'buy', label: Translate("market_buy") },
         { active: (page == "trade"), link: 'trade', label: Translate("market_trade") },
         { active: (page == "manage"), link: 'manage', label: Translate("market_manage") },
       ]}/>
-      {page == "buy" && <Buy currentListings={currentListings}/>}
-      {page == "trade" && <Trade/>}
+      {page == "buy" && <Buy currentListings={marketData.listings} currentCart={marketData.cart}/>}
+      {page == "trade" && <Trade currentListings={marketData.trades}/>}
       {page == "manage" && <Manage/>}
       <div id="market-modal-container" className={classes["modal-container"]}></div>
     </Group>
-  );
+  ) : null);
 }

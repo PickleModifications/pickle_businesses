@@ -1,11 +1,12 @@
-function OpenMenu() {
-    window.postMessage({ 
-        type: 'openMarket',
+function SendConfig() {
+    window.postMessage({
+        type: 'updateConfig',
         currency: { name: "EUR", symbol: "€" },
         locale: {
             market_buy: "Product Listings",
             market_trade: "Trade Listings",
             market_manage: "Manage Business",
+            market_search_results: "%s results found.",
             market_buy_edit_title: "Editing %s (SKU: %s)",
             market_buy_edit_price: "Price",
             market_buy_edit_count: "Count",
@@ -23,7 +24,19 @@ function OpenMenu() {
             market_buy_purchase: "Purchase %s Item(s)",
             market_buy_cart_empty: "Your cart is empty.",
             market_buy_cart_empty_desc: "Add items to your cart by clicking on them.",
+            market_trade_search: "Search for a trade...",
+            market_trade_sku: "Trade Listing (SKU: %s)",
+            market_trade_give: "Offers",
+            market_trade_receive: "Demands",
+            market_trade_accept: "Perform Trade",
+            market_trade_add: "Add Trade Listing",
         },
+    }, '*');
+}
+
+function OpenMenu() {
+    window.postMessage({ 
+        type: 'openMarket',
         marketData: {
             inventory: [
                 {name: "Meta Apple", count: 10, durability: 99.99, metadata: {}},  
@@ -49,6 +62,101 @@ function OpenMenu() {
                 { name: "Item 28", count: 280, metadata: {} },
                 { name: "Item 29", count: 290, metadata: {} },
                 { name: "Item 30", count: 300, metadata: {} }
+            ],
+            trades: [
+                {
+                    sku: "100100",
+                    give: {
+                        items: [
+                            { name: "Orange", count: 20, metadata: {}},
+                            { name: "Item 3", count: 30, metadata: {}},
+                            { name: "Orange", count: 20, metadata: {}},
+                            { name: "Item 3", count: 30, metadata: {}},
+                            { name: "Orange", count: 20, metadata: {}},
+                            { name: "Item 3", count: 30, metadata: {}},
+                            { name: "Orange", count: 20, metadata: {}},
+                            { name: "Item 3", count: 30, metadata: {}},
+                        ],
+                        currencies: []
+                    },
+                    receive: {
+                        items: [
+                            { name: "Item 4", count: 40, metadata: {}},
+                            { name: "Item 5", count: 50, metadata: {}},
+                        ],
+                        currencies: []
+                    },
+                },
+                {
+                    sku: "100100",
+                    give: {
+                        items: [
+                            { name: "Orange", count: 20, metadata: {}},
+                            { name: "Item 3", count: 30, metadata: {}},
+                            { name: "Orange", count: 20, metadata: {}},
+                            { name: "Item 3", count: 30, metadata: {}},
+                            { name: "Orange", count: 20, metadata: {}},
+                            { name: "Item 3", count: 30, metadata: {}},
+                            { name: "Orange", count: 20, metadata: {}},
+                            { name: "Item 3", count: 30, metadata: {}},
+                        ],
+                        currencies: []
+                    },
+                    receive: {
+                        items: [
+                            { name: "Item 4", count: 40, metadata: {}},
+                            { name: "Item 5", count: 50, metadata: {}},
+                        ],
+                        currencies: []
+                    },
+                },
+                {
+                    sku: "100100",
+                    give: {
+                        items: [
+                            { name: "Orange", count: 20, metadata: {}},
+                            { name: "Item 3", count: 30, metadata: {}},
+                            { name: "Orange", count: 20, metadata: {}},
+                            { name: "Item 3", count: 30, metadata: {}},
+                            { name: "Orange", count: 20, metadata: {}},
+                            { name: "Item 3", count: 30, metadata: {}},
+                            { name: "Orange", count: 20, metadata: {}},
+                            { name: "Item 3", count: 30, metadata: {}},
+                        ],
+                        currencies: []
+                    },
+                    receive: {
+                        items: [
+                            { name: "Item 4", count: 40, metadata: {}},
+                            { name: "Item 5", count: 50, metadata: {}},
+                        ],
+                        currencies: []
+                    },
+                },
+                {
+                    sku: "100100",
+                    give: {
+                        items: [
+                            { name: "Orange", count: 20, metadata: {}},
+                            { name: "Item 3", count: 30, metadata: {}},
+                            { name: "Orange", count: 20, metadata: {}},
+                            { name: "Item 3", count: 30, metadata: {}},
+                            { name: "Orange", count: 20, metadata: {}},
+                            { name: "Item 3", count: 30, metadata: {}},
+                            { name: "Orange", count: 20, metadata: {}},
+                            { name: "Item 3", count: 30, metadata: {}},
+                        ],
+                        currencies: []
+                    },
+                    receive: {
+                        items: [
+                            { name: "Item 4", count: 40, metadata: {}},
+                            { name: "Item 5", count: 50, metadata: {}},
+                        ],
+                        currencies: []
+                    },
+                },
+
             ],
             listings: [
                 {sku: "500501", name: "BIG JUICY BANNANA AND ORANGE JUICE", price: 10000000, count: 100000, metadata: {}},
@@ -98,12 +206,29 @@ function OpenMenu() {
 
 document.addEventListener('DOMContentLoaded', function() {
     setTimeout(() => {
-        OpenMenu();
+        SendConfig();
+        setTimeout(() => {
+            OpenMenu();
+        }, 100);
     }, 100);
 });
 
 window.addEventListener('message', function(event) {
     if (event.data.type === 'refreshPage') {
-        OpenMenu();
+        SendConfig();
+        setTimeout(() => {
+            OpenMenu();
+        }, 100);
     }
 });
+
+
+window.onkeydown = function(event) {
+    if (event.key === 'Escape') {
+        window.postMessage({ type: 'updateListings', listings: [
+            {sku: "500501", name: "BIG JUICY BANNANA AND ORANGE JUICE", price: 10000000, count: 100000, metadata: {}},
+            {sku: "500502", name: "Orange", price: 500, count: 20, metadata: {}},
+            {sku: "500503", name: "Item 3", price: 300, count: 30, metadata: {}},
+        ] }, '*');
+    }
+}

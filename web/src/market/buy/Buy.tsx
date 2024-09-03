@@ -1,8 +1,8 @@
 import { AspectRatio, Box, Button, Container, Group, NumberInput, rem, ScrollArea, SimpleGrid, Text, TextInput } from "@mantine/core";
 import { useEffect, useState } from "react";
-import { GetMarketData, GetPriceString, Item, Translate } from "../../App";
+import { GetPriceString, Item, Translate } from "../../App";
 import { IconEdit, IconPlus, IconSearch, IconShoppingCartPlus, IconTrash, IconX } from "@tabler/icons-react";
-import { UpdateListings, HasPermission, GetMaxCount } from "../Market";
+import { HasPermission, GetMaxCount, GetMarketData } from "../Market";
 import classes from "./Buy.module.css";
 import { Modal } from "../modal/Modal";
 import { useDisclosure } from "@mantine/hooks";
@@ -56,14 +56,14 @@ function BuyDeleteModal({listing, opened, close} : {listing: Item, opened: boole
     );
 }
 
-function ItemDisplayInfo({listing, openEdit, openDelete} : {listing: Item, openEdit?: () => void, openDelete?: () => void}) {
+function ItemDisplayInfo({listing, openEdit, openDelete, imageSize} : {listing: Item, openEdit?: () => void, openDelete?: () => void, imageSize?: string}) {
     return (
         <Group h={"100%"} style={{
             userSelect: "none",
             flexDirection: "row", 
             alignContent:"space-between", 
             backgroundImage: 'url("/item_placeholder.png")',
-            backgroundSize: "65%",
+            backgroundSize: (imageSize || "65%"),
             backgroundPositionX: "center",
             backgroundPositionY: "25%",
             backgroundRepeat: "no-repeat",
@@ -88,7 +88,7 @@ function ItemDisplayInfo({listing, openEdit, openDelete} : {listing: Item, openE
     );
 }
 
-function ItemDisplay({onClick, listing, style} : {onClick?: () => void, listing: Item, style?: any}) {
+export function ItemDisplay({onClick, listing, style, imageSize} : {onClick?: () => void, listing: Item, style?: any, imageSize?: string}) {
     if (listing.listingType == "market") { 
         if (!HasPermission("items")) {
             return (
@@ -97,7 +97,7 @@ function ItemDisplay({onClick, listing, style} : {onClick?: () => void, listing:
                         <IconShoppingCartPlus size={30} color={"white"} />
                     </Group>
                     <AspectRatio className={classes["item"]} ratio={1} style={{position: "relative", backgroundColor: "rgba(0, 0, 0, 0.25)"}}>
-                        <ItemDisplayInfo listing={listing} />
+                        <ItemDisplayInfo imageSize={imageSize} listing={listing} />
                     </AspectRatio>
                 </Box>
             );
@@ -109,17 +109,17 @@ function ItemDisplay({onClick, listing, style} : {onClick?: () => void, listing:
                     <BuyEditModal listing={listing} opened={editOpened} close={closeEdit}/>
                     <BuyDeleteModal listing={listing} opened={deleteOpened} close={closeDelete}/>
                     <AspectRatio ratio={1} style={{position: "relative", backgroundColor: "rgba(0, 0, 0, 0.25)", ...style}}>
-                        <ItemDisplayInfo openEdit={openEdit} openDelete={openDelete} listing={listing} />
+                        <ItemDisplayInfo imageSize={imageSize} openEdit={openEdit} openDelete={openDelete} listing={listing} />
                     </AspectRatio>
                 </Box>
             );
         }
     }
-    else if (listing.listingType == "market-view") {
+    else if (listing.listingType == "market-view" || listing.listingType == "trade") {
         return (
             <Box onClick={onClick} pos={"relative"}>
                 <AspectRatio ratio={1} style={{position: "relative", backgroundColor: "rgba(0, 0, 0, 0.25)", ...style}}>
-                    <ItemDisplayInfo listing={listing} />
+                    <ItemDisplayInfo imageSize={imageSize} listing={listing} />
                 </AspectRatio>
             </Box>
         );
@@ -233,8 +233,8 @@ function Listings({listings, addListing} : {listings: Item[], addListing?: (sku:
         <Group miw={"70%"} gap={0} style={{flexDirection: "column"}}>
             <Group pl={20} pr={20} pt={10} pb={10} w={"100%"} style={{justifyContent: "space-between"}}>
                 <Group>
-                    <Text fz={"md"} fw={600}>Product Listings</Text>
-                    <Text fz="xs" fw={400}>{filteredListings.length} result(s) found</Text>
+                    <Text fz={"md"} fw={600}>{Translate("market_buy")}</Text>
+                    <Text fz="xs" fw={400}>{Translate("market_search_results", filteredListings.length + "")}</Text>
                 </Group>
                 <TextInput onChange={(event) => setFilter(event.currentTarget.value)} size="xs" placeholder={Translate("market_buy_search")} leftSection={<IconSearch style={{ width: rem(16), height: rem(16) }} stroke={1.5} />} />
             </Group>
@@ -314,9 +314,24 @@ function Cart({listings, cart, updateCart} : {listings: Item[], cart: Item[], up
     ));
 }
 
-export function Buy({currentListings} : {currentListings?: Item[]}) {
+export function Buy({currentListings, currentCart} : {currentListings?: Item[], currentCart?: Item[]}) {
     const [listings, setListings] = useState<Item[]>(currentListings || []);
-    const [cart, setCart] = useState<Item[]>([]);
+    const [cart, setCartValue] = useState<Item[]>(currentCart || []);
+    const setCart = (cart: Item[]) => {
+        setCartValue(cart);
+        window.postMessage({ type: 'updateCart', cart: cart }, '*');
+    }
+    let refreshCart = false;
+    cart.map((cartListing) => {
+        let listing = listings.find((listing) => listing.sku == cartListing.sku);
+        if (!listing) {
+            cart.splice(cart.indexOf(cartListing), 1);
+            refreshCart = true;
+        }
+    });
+    if (refreshCart) {
+        setCart([...cart]);
+    }
     window.addEventListener('message', (event) => {
         if (event.data.type === 'updateListings') {
             setListings(event.data.listings);
@@ -325,7 +340,7 @@ export function Buy({currentListings} : {currentListings?: Item[]}) {
     return (
         <Group gap={0} style={{alignItems: "unset", width: "100%", height: "calc(100% - 56px)", flexWrap: "nowrap"}}>
             <Listings addListing={(sku)=> {
-                let listing = currentListings?.find((listing) => listing.sku == sku);
+                let listing = listings?.find((listing) => listing.sku == sku);
                 if (!listing) return;
                 let cartListing = cart.find((cartListing) => cartListing.sku == sku);
                 if (cartListing) {
@@ -340,9 +355,3 @@ export function Buy({currentListings} : {currentListings?: Item[]}) {
         </Group>
     );
 }
-
-window.addEventListener('message', (event) => {
-    if (event.data.type === 'updateListings') {
-        UpdateListings(event.data.listings);
-    }
-})
