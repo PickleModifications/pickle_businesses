@@ -3,6 +3,7 @@ import { Market } from './market/Market';
 import './App.css'
 import '@mantine/core/styles.css';
 import { useState } from 'react';
+import { useNuiEvent } from './nui/useNui';
 
 export type Currency = {
   name: string,
@@ -61,11 +62,9 @@ function App() {
   const [localeValue, setLocale] = useState<Translation>({});
   currency = currencyValue;
   locale = localeValue;
-  window.addEventListener('message', (event) => {
-    if (event.data.type === 'updateConfig') {
-      setCurrency(event.data.currency);
-      setLocale(event.data.locale);
-    }
+  useNuiEvent("updateConfig", (data: any) => {
+    setCurrency(data.currency);
+    setLocale(data.locale);
   });
   return (
     <MantineProvider defaultColorScheme='dark'>

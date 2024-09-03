@@ -1,9 +1,11 @@
 import { Button, Group, NumberInput, rem, ScrollArea, SimpleGrid, Text, TextInput } from "@mantine/core";
 import { Item, Translate } from "../../App";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { IconPlus, IconSearch } from "@tabler/icons-react";
-import { HasPermission } from "../Market";
+import { HasPermission, MarketDataContext } from "../Market";
 import { ItemDisplay } from "../buy/Buy";
+import { Modal } from "../modal/Modal";
+import { useDisclosure } from "@mantine/hooks";
 
 export type ServerCurrency = {
     name: string,
@@ -23,12 +25,18 @@ export type TradeListing = {
 }
 
 function TradeAddListing() {
+    const [opened, { open, close }] = useDisclosure(false);
     return (
-        <Group>
-            <Button leftSection={<IconPlus style={{ width: rem(16), height: rem(16) }}  />} fullWidth size="xs" color="blue" style={{width: "100%", borderRadius: "5px"}}>
-                {Translate("market_trade_add")}
-            </Button>
-        </Group>
+        <>
+            <Group>
+                <Button onClick={open} leftSection={<IconPlus style={{ width: rem(16), height: rem(16) }}  />} fullWidth size="xs" color="blue" style={{width: "100%", borderRadius: "5px"}}>
+                    {Translate("market_trade_add")}
+                </Button>
+            </Group>
+            <Modal title={Translate("market_trade_add")} opened={opened} close={close}>
+                balls
+            </Modal>
+        </>
     );
 }
 
@@ -120,8 +128,11 @@ function TradeListings({listings} : {listings: TradeListing[]}) {
     );
 }
 
-export function Trade({currentListings} : {currentListings?: TradeListing[]}) {
-    const [listings, setListings] = useState<TradeListing[]>(currentListings || []);
+export function Trade() {
+    const context = useContext(MarketDataContext);
+    if (!context) { return (<></>); }
+    const { marketData } = context;
+    const [listings, setListings] = useState<TradeListing[]>(marketData.trades || []);
     return (
         <Group gap={0} style={{alignItems: "unset", width: "100%", height: "calc(100% - 56px)", flexWrap: "nowrap"}}>
             <TradeListings listings={listings}/>

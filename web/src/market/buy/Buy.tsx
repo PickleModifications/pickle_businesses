@@ -6,6 +6,7 @@ import { HasPermission, GetMaxCount, MarketDataContext } from "../Market";
 import classes from "./Buy.module.css";
 import { Modal } from "../modal/Modal";
 import { useDisclosure } from "@mantine/hooks";
+import { useNuiEvent } from "../../nui/useNui";
 
 function BuyEditModal({listing, opened, close} : {listing: Item, opened: boolean, close: () => void}) {
     if (!listing.sku) return null;
@@ -323,12 +324,15 @@ function Cart({listings, cart, updateCart} : {listings: Item[], cart: Item[], up
     ));
 }
 
-export function Buy({currentListings, currentCart} : {currentListings?: Item[], currentCart?: Item[]}) {
-    const [listings, setListings] = useState<Item[]>(currentListings || []);
-    const [cart, setCartValue] = useState<Item[]>(currentCart || []);
+export function Buy() {
+    const context = useContext(MarketDataContext);
+    if (!context) return (<></>);
+    const { marketData } = context;
+    const [listings, setListings] = useState<Item[]>(marketData.listings || []);
+    const [cart, setCartValue] = useState<Item[]>(marketData.cart || []);
     const setCart = (cart: Item[]) => {
+        marketData.cart = cart;
         setCartValue(cart);
-        window.postMessage({ type: 'updateCart', cart: cart }, '*');
     }
     let refreshCart = false;
     cart.map((cartListing) => {
@@ -341,11 +345,9 @@ export function Buy({currentListings, currentCart} : {currentListings?: Item[], 
     if (refreshCart) {
         setCart([...cart]);
     }
-    window.addEventListener('message', (event) => {
-        if (event.data.type === 'updateListings') {
-            setListings(event.data.listings);
-        }
-    })
+    useNuiEvent("updateListings", (data: any) => {
+        setListings(data.listings);
+    });
     return (
         <Group gap={0} style={{alignItems: "unset", width: "100%", height: "calc(100% - 56px)", flexWrap: "nowrap"}}>
             <Listings addListing={(sku)=> {

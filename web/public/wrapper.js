@@ -225,8 +225,9 @@ window.addEventListener('message', function(event) {
 });
 
 
-window.onkeydown = function(event) {
+window.onkeyup = function(event) {
     if (event.key === 'Escape') {
+        console.log("SEND")
         window.postMessage({ type: 'updateListings', listings: [
             {sku: "500501", name: "BIG JUICY BANNANA AND ORANGE JUICE", price: 10000000, count: 100000, metadata: {}},
             {sku: "500502", name: "Orange", price: 500, count: 20, metadata: {}},

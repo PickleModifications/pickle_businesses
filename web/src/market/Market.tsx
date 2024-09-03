@@ -8,6 +8,7 @@ import { Buy } from "./buy/Buy";
 import { Trade, TradeListing } from "./trade/Trade";
 import { Manage } from "./manage/Manage";
 import { Translate, Item } from "../App";
+import { useNuiEvent } from "../nui/useNui";
 
 type Link = {
     active?: boolean;
@@ -25,10 +26,8 @@ export type MarketData = {
 
 let marketData: MarketData = {};
 
-
 interface MarketDataContextType {
   marketData: MarketData;
-  getData: () => MarketData;
 }
 
 export const MarketDataContext = createContext<MarketDataContextType | undefined>(undefined);
@@ -127,24 +126,13 @@ export function Market() {
   const [page, setPage] = useState("trade");
   const [marketData, setMarketData] = useState<MarketData>({listings: [], trades: [], inventory: []});
   const [opened, setOpened] = useState(false);
-  window.addEventListener('message', (event) => {
-    if (event.data.type === 'openMarket') {
-      setMarketData(event.data.marketData);
-      setOpened(true);
-    }
+  useNuiEvent("openMarket", (data: any) => {
+    setMarketData(data.marketData);
+    setOpened(true);
   });
-  window.addEventListener('message', (event) => {
-    if (event.data.type === 'updateListings') {
-      marketData.listings = event.data.listings;
-      setMarketData(marketData);
-    }
-  })
-  window.addEventListener('message', (event) => {
-    if (event.data.type === 'updateCart') {
-      marketData.cart = event.data.cart;
-      setMarketData(marketData);
-    }
-  })
+  useNuiEvent("updateListings", (data: any) => {
+    marketData.listings = data.listings;
+  });
   return (opened ? (
     <Group style={{position: "relative", flexDirection: "column", flexWrap: "nowrap", borderRadius: 5}} gap={0} w={900} h={550} bg={"dark.8"}>
       <HeaderMenu title={"Pickle's Shopping Center"} setPage={setPage} links={[
@@ -152,9 +140,9 @@ export function Market() {
         { active: (page == "trade"), link: 'trade', label: Translate("market_trade") },
         { active: (page == "manage"), link: 'manage', label: Translate("market_manage") },
       ]}/>
-      <MarketDataContext.Provider value={{marketData: marketData, getData: () => marketData}}>
-        {page == "buy" && <Buy currentListings={marketData.listings} currentCart={marketData.cart}/>}
-        {page == "trade" && <Trade currentListings={marketData.trades}/>}
+      <MarketDataContext.Provider value={{marketData: marketData}}>
+        {page == "buy" && <Buy/>}
+        {page == "trade" && <Trade/>}
         {page == "manage" && <Manage/>}
       </MarketDataContext.Provider>
       <div id="market-modal-container" className={classes["modal-container"]}></div>
