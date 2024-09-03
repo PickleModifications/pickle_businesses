@@ -29,7 +29,9 @@ function SendConfig() {
             market_trade_give: "Offers",
             market_trade_receive: "Demands",
             market_trade_accept: "Perform Trade",
-            market_trade_add: "Add Trade Listing",
+            market_trade_add: "Add Listing",
+            market_trade_manage: "Edit Listing",
+            market_trade_delete: "Delete Listing",
         },
     }, '*');
 }

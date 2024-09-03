@@ -1,8 +1,8 @@
 import { AspectRatio, Box, Button, Container, Group, NumberInput, rem, ScrollArea, SimpleGrid, Text, TextInput } from "@mantine/core";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { GetPriceString, Item, Translate } from "../../App";
 import { IconEdit, IconPlus, IconSearch, IconShoppingCartPlus, IconTrash, IconX } from "@tabler/icons-react";
-import { HasPermission, GetMaxCount, GetMarketData } from "../Market";
+import { HasPermission, GetMaxCount, MarketDataContext } from "../Market";
 import classes from "./Buy.module.css";
 import { Modal } from "../modal/Modal";
 import { useDisclosure } from "@mantine/hooks";
@@ -70,7 +70,7 @@ function ItemDisplayInfo({listing, openEdit, openDelete, imageSize} : {listing: 
             justifyContent: "",
         }}>
             <Group gap={0} pl={5} mt={2}>
-                { listing.price && <Text style={{textAlign: "left"}} fz={"xs"}>{GetPriceString(listing.price)}</Text> }
+                { listing.price && <Text style={{textAlign: "left"}} fz={10}>{GetPriceString(listing.price)}</Text> }
             </Group>
             <Group w={"100%"} gap={0} style={{justifyContent: "flex-end"}}> 
                 <Group pl={5} pb={2} pr={5} grow w={"100%"} gap={0} style={{flexWrap:"nowrap", justifyContent: "space-between"}}>
@@ -78,10 +78,10 @@ function ItemDisplayInfo({listing, openEdit, openDelete, imageSize} : {listing: 
                         <IconEdit onClick={openEdit} style={{cursor: "pointer"}} size={15} color={"white"} />
                         <IconTrash onClick={openDelete} style={{cursor: "pointer"}} size={15} color={"white"} />
                     </Group> : null }
-                    <Text fz={"xs"} style={{textAlign: "right"}}>x{listing.count}</Text>
+                    <Text fz={10} style={{textAlign: "right"}}>x{listing.count}</Text>
                 </Group>
                 <Group grow w={"100%"} style={{backgroundColor: "rgba(0, 0, 0, 0.25)"}}> 
-                    <Text pl={4} pr={4} fz={"xs"} style={{ textOverflow: "ellipsis", textWrap:"nowrap", overflow: "hidden", textAlign: "center"}}>{listing.name}</Text>
+                    <Text pl={4} pr={4} fz={10} style={{ textOverflow: "ellipsis", textWrap:"nowrap", overflow: "hidden", textAlign: "center"}}>{listing.name}</Text>
                 </Group>
             </Group>
         </Group>
@@ -127,7 +127,9 @@ export function ItemDisplay({onClick, listing, style, imageSize} : {onClick?: ()
 }
 
 function SelectInventoryItem({onSelect} : {onSelect: (index: number) => void}) {
-    let marketData = GetMarketData();
+    const context = useContext(MarketDataContext);
+    if (!context) return (<></>);
+    const { marketData } = context;
     if (!marketData || !marketData.inventory || marketData.inventory.length == 0) {
         return null;
     }
@@ -149,23 +151,30 @@ function SelectInventoryItem({onSelect} : {onSelect: (index: number) => void}) {
 }
 
 function InventoryItemSelected({index, onClick, onClose} : {index: number, onClick?: () => void, onClose: () => void}) {
-    let marketData = GetMarketData();
-    if (!marketData || !marketData.inventory || marketData.inventory.length == 0) {
-        onClose();
+    const context = useContext(MarketDataContext);
+    const failLoad = () => {
+        useEffect(() => {
+            onClose();
+        }, []);
         return (<></>);
+    }
+    if (!context) { 
+        return failLoad();
+    }
+    const { marketData } = context;
+    if (!marketData || !marketData.inventory || marketData.inventory.length == 0) {
+        return failLoad();
     }
     let inventory = marketData.inventory;
     let listing = inventory[index];
     if (!listing) {
-        onClose();
-        return (<></>);
+        return failLoad();
     }
     let maxCount = GetMaxCount(listing)?.count || 0;
     const [price, setPrice] = useState<number>(listing.price || 0);
     const [count, setCount] = useState<number>(maxCount);
     if (maxCount == 0) {
-        onClose();
-        return (<></>);
+        return failLoad();
     }
     return (
         <Group gap={0} align="flex-start" style={{flexDirection: "column"}}>

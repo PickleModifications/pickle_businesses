@@ -56,10 +56,17 @@ function TradeListing({listing} : {listing: TradeListing}) {
                     }
                 </Group>
             </ScrollArea>
-            <Group w={"100%"} gap={0} wrap="nowrap">
-                <Button fullWidth size="xs" color="blue" style={{width: "100%", borderRadius: "5px 0px 0px 5px"}}>{Translate("market_trade_accept")}</Button>   
-                <NumberInput  size="xs" defaultValue={1} min={1} max={100} radius={"0px 5px 5px 0"} style={{width: 75}}/>
-            </Group>
+            {!HasPermission("items") ? (
+                <Group w={"100%"} gap={0} wrap="nowrap">
+                    <Button fullWidth size="xs" color="blue" style={{width: "100%", borderRadius: "5px 0px 0px 5px"}}>{Translate("market_trade_accept")}</Button>   
+                    <NumberInput  size="xs" defaultValue={1} min={1} max={100} radius={"0px 5px 5px 0"} style={{width: 75}}/>
+                </Group>
+            ) : (
+                <Group w={"100%"} gap={10} wrap="nowrap">
+                    <Button fullWidth size="xs" color="blue" style={{width: "100%", borderRadius: "5px"}}>{Translate("market_trade_manage")}</Button>
+                    <Button fullWidth size="xs" color="red" style={{width: "100%", borderRadius: "5px"}}>{Translate("market_trade_delete")}</Button>
+                </Group>
+            )}
         </Group>
     );
 }

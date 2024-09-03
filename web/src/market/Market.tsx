@@ -2,7 +2,7 @@ import { Text, Menu, Group, Center, Burger, Container } from "@mantine/core";
 import { useDisclosure } from '@mantine/hooks';
 import { IconChevronDown } from '@tabler/icons-react';
 import classes from "./Market.module.css";
-import { useState } from "react";
+import { createContext, useContext, useState } from "react";
 
 import { Buy } from "./buy/Buy";    
 import { Trade, TradeListing } from "./trade/Trade";
@@ -25,12 +25,20 @@ export type MarketData = {
 
 let marketData: MarketData = {};
 
-export function GetMarketData() {
-  return marketData;
+
+interface MarketDataContextType {
+  marketData: MarketData;
+  getData: () => MarketData;
 }
 
+export const MarketDataContext = createContext<MarketDataContextType | undefined>(undefined);
+
 export function GetMaxCount(item: Item) {
-  let marketData = GetMarketData();
+  const context = useContext(MarketDataContext);
+  if (!context) { 
+    return null;
+  }
+  const { marketData } = context;
   if (!marketData || !marketData.inventory || marketData.inventory.length == 0) {
       return null;
   }
@@ -144,9 +152,11 @@ export function Market() {
         { active: (page == "trade"), link: 'trade', label: Translate("market_trade") },
         { active: (page == "manage"), link: 'manage', label: Translate("market_manage") },
       ]}/>
-      {page == "buy" && <Buy currentListings={marketData.listings} currentCart={marketData.cart}/>}
-      {page == "trade" && <Trade currentListings={marketData.trades}/>}
-      {page == "manage" && <Manage/>}
+      <MarketDataContext.Provider value={{marketData: marketData, getData: () => marketData}}>
+        {page == "buy" && <Buy currentListings={marketData.listings} currentCart={marketData.cart}/>}
+        {page == "trade" && <Trade currentListings={marketData.trades}/>}
+        {page == "manage" && <Manage/>}
+      </MarketDataContext.Provider>
       <div id="market-modal-container" className={classes["modal-container"]}></div>
     </Group>
   ) : null);
