@@ -1,4 +1,4 @@
-import { Button, Group, NumberInput, rem, ScrollArea, SimpleGrid, Text, TextInput } from "@mantine/core";
+import { AspectRatio, Box, Button, Group, NumberInput, rem, ScrollArea, SimpleGrid, Text, TextInput } from "@mantine/core";
 import { Item, Translate } from "../../App";
 import { useContext, useState } from "react";
 import { IconPlus, IconSearch } from "@tabler/icons-react";
@@ -24,8 +24,33 @@ export type TradeListing = {
     },
 }
 
+export type TradeListingState = {
+    mode: string,
+    addData?: {
+        tradeSection: string
+    },
+}
+
 function TradeAddListing() {
     const [opened, { open, close }] = useDisclosure(false);
+    const [listing, setListing] = useState<TradeListing>({give: {items: [], currencies: []}, receive: {items: [], currencies: []}});
+    const [listingState, setListingState] = useState<TradeListingState>({mode: "view-trade"});
+    let children = (<></>);
+    if (listingState.mode === "view-trade") {
+        children = (
+            <TradeListingDisplay listing={listing} addListing={(tradeSection) => {
+                setListingState({mode: "add-requirement", addData: {tradeSection: tradeSection}});
+            }}/>
+        );
+    }
+    else if (listingState.mode === "add-requirement") {
+        children = (
+            <Group gap={10} style={{flexDirection: "column", alignItems: "center"}}>
+                <Text fz={"sm"} fw={600}>{Translate("market_trade_add")}</Text>
+                <ItemDisplay imageSize="50%" style={{width: 75}} listing={{name: "Test", listingType: "trade"}}/>
+            </Group>
+        );
+    }
     return (
         <>
             <Group>
@@ -33,20 +58,31 @@ function TradeAddListing() {
                     {Translate("market_trade_add")}
                 </Button>
             </Group>
-            <Modal title={Translate("market_trade_add")} opened={opened} close={close}>
-                balls
+            <Modal title={Translate("market_trade_add")} opened={true} close={close}>
+                <Group p={10} gap={10} style={{flexDirection: "column", alignItems: "center"}} bg={"dark.7"}>
+                    {children}
+                </Group>
             </Modal>
         </>
     );
 }
 
-function TradeListing({listing} : {listing: TradeListing}) {
+function TradeListingDisplay({listing, addListing} : {listing: TradeListing, addListing?: (tradeSection: string) => void}) {
     return (
-        <Group p={10} gap={10} style={{flexDirection: "column", alignItems: "center"}} bg={"dark.7"}>
+        <>
             <Text fz={"sm"} fw={600}>{Translate("market_trade_give")}</Text>
             {/* <Text fz={"md"} fw={600}>{Translate("market_trade_sku", listing?.sku || "N/A")}</Text> */}
             <ScrollArea w={"100%"} pt={10} pb={10} style={{flex: 1}} bg={"dark.8"}>
                 <Group pl={10} pr={10} gap={4} wrap="nowrap">
+                    {addListing && (
+                        <Box w={75} pos="relative">
+                            <AspectRatio onClick={() => addListing("give")} ratio={1} style={{cursor: "pointer", position: "relative", backgroundColor: "rgba(0, 0, 0, 0.25)"}}>
+                                <Group justify="center">
+                                    <IconPlus size={35} color={"white"} />
+                                </Group>
+                            </AspectRatio>
+                        </Box>
+                    )}
                     {
                         listing.give.items.map((item, itemIndex) => (
                             <ItemDisplay imageSize="50%" style={{width: 75}} listing={{...item, listingType: "trade"}} key={itemIndex}/>
@@ -57,6 +93,15 @@ function TradeListing({listing} : {listing: TradeListing}) {
             <Text fz={"sm"} fw={600}>{Translate("market_trade_receive")}</Text>
             <ScrollArea w={"100%"} pt={10} pb={10} style={{flex: 1}} bg={"dark.8"}>
                 <Group pl={10} pr={10} gap={4} wrap="nowrap">
+                {addListing && (
+                        <Box w={75} pos="relative">
+                            <AspectRatio onClick={() => addListing("receive")} ratio={1} style={{cursor: "pointer", position: "relative", backgroundColor: "rgba(0, 0, 0, 0.25)"}}>
+                                <Group justify="center">
+                                    <IconPlus size={35} color={"white"} />
+                                </Group>
+                            </AspectRatio>
+                        </Box>
+                    )}
                     {
                         listing.give.items.map((item, itemIndex) => (
                             <ItemDisplay imageSize="50%" style={{width: 75}} listing={{...item, listingType: "trade"}} key={itemIndex}/>
@@ -64,6 +109,14 @@ function TradeListing({listing} : {listing: TradeListing}) {
                     }
                 </Group>
             </ScrollArea>
+        </>
+    );
+}
+
+function TradeListing({listing} : {listing: TradeListing}) {
+    return (
+        <Group p={10} gap={10} style={{flexDirection: "column", alignItems: "center"}} bg={"dark.7"}>
+            <TradeListingDisplay listing={listing}/>
             {!HasPermission("items") ? (
                 <Group w={"100%"} gap={0} wrap="nowrap">
                     <Button fullWidth size="xs" color="blue" style={{width: "100%", borderRadius: "5px 0px 0px 5px"}}>{Translate("market_trade_accept")}</Button>   
