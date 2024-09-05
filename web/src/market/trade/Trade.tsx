@@ -2,25 +2,20 @@ import { AspectRatio, Box, Button, Group, NumberInput, rem, ScrollArea, SimpleGr
 import { Item, Translate } from "../../App";
 import { useContext, useState } from "react";
 import { IconPlus, IconSearch } from "@tabler/icons-react";
-import { HasPermission, MarketDataContext } from "../Market";
+import { CURRENCY_ITEMS, HasPermission, IsItemAllowed, MarketDataContext } from "../Market";
 import { ItemDisplay } from "../buy/Buy";
 import { Modal } from "../modal/Modal";
 import { useDisclosure } from "@mantine/hooks";
-
-export type ServerCurrency = {
-    name: string,
-    count: number
-}
 
 export type TradeListing = {
     sku?: string,
     give: {
         items: Item[],
-        currencies: ServerCurrency[]
+        currencies: Item[]
     },
     receive: {
         items: Item[],
-        currencies: ServerCurrency[]
+        currencies: Item[]
     },
 }
 
@@ -31,8 +26,60 @@ export type TradeListingState = {
     },
 }
 
+function TradeListingSelect({tradeSection, selected} : {tradeSection: string, selected: (item: Item) => void}) {
+    const [count, setCount] = useState<number>(1);
+    const [item, setItem] = useState<Item | null>(null);
+    const context = useContext(MarketDataContext);
+    if (!context) return (<></>);
+    const { marketData } = context;
+    let children = (<></>);
+    if (!item) {
+        children = (
+            <Group gap={10} style={{flexDirection: "column", alignItems: "flex-start"}}>
+                <Text fz={"sm"} fw={600}>{Translate("market_trade_select_"+tradeSection)}</Text>
+                <ScrollArea h={400} w={600} bg={"dark.8"}>
+                    <SimpleGrid cols={5} p={20}>
+                        {CURRENCY_ITEMS.filter((item) => (IsItemAllowed({...item, isCurrency: true}))).map((item, itemId) => (
+                            <ItemDisplay onClick={() => setItem({name: item.name, count: 1})} style={{cursor: "pointer"}} key={itemId} listing={{
+                                name: item.name,
+                                isCurrency: true,
+                                listingType: "market-view"
+                            }}/>
+                        ))}
+                        {marketData.items.filter((item) => (IsItemAllowed(item))).map((item, itemId) => (
+                            <ItemDisplay onClick={() => setItem({name: item.name, count: 1})} style={{cursor: "pointer"}} key={itemId} listing={{
+                                name: item.name,
+                                listingType: "market-view"
+                            }}/>
+                        ))}
+                    </SimpleGrid >
+                </ScrollArea>
+            </Group>
+        );
+    }
+    else {
+        children = (
+            <Group gap={0} w={"100%"} align="flex-start" style={{flexDirection: "column"}}>
+                <Group gap={10} style={{ width: "100%", flexWrap: "nowrap"}}>
+                    <ItemDisplay onClick={() => setItem(null)} style={{width: 100, cursor: "pointer"}} listing={{
+                        name: item.name,
+                        listingType: "market-view"
+                    }}/>
+                    <Group gap={0} style={{flexDirection: "column", justifyContent: "space-between", width: "100%" }}>
+                        <Group pb={10} grow gap={0} style={{ width: "100%", flexWrap: "nowrap", justifyContent: "space-between" }}>
+                            <NumberInput clampBehavior="strict" min={1} allowDecimal={false} label={Translate("market_buy_edit_count") + ":"} size="xs" value={count} onChange={(value) => { setCount(Number(value)); }} />
+                        </Group>
+                    </Group>
+                </Group>
+                <Button style={{width: "100%", marginTop: 10}} onClick={() => selected({name: item.name, count: count})}>{Translate("market_trade_add_"+tradeSection)}</Button>
+            </Group>
+        )
+    }
+    return children;
+}
+
 function TradeAddListing() {
-    const [opened, { open, close }] = useDisclosure(false);
+    const [opened, { open, close }] = useDisclosure(true);
     const [listing, setListing] = useState<TradeListing>({give: {items: [], currencies: []}, receive: {items: [], currencies: []}});
     const [listingState, setListingState] = useState<TradeListingState>({mode: "view-trade"});
     let children = (<></>);
@@ -45,10 +92,33 @@ function TradeAddListing() {
     }
     else if (listingState.mode === "add-requirement") {
         children = (
-            <Group gap={10} style={{flexDirection: "column", alignItems: "center"}}>
-                <Text fz={"sm"} fw={600}>{Translate("market_trade_add")}</Text>
-                <ItemDisplay imageSize="50%" style={{width: 75}} listing={{name: "Test", listingType: "trade"}}/>
-            </Group>
+            <TradeListingSelect tradeSection={listingState.addData?.tradeSection || ""} selected={(item) => {
+                if (listingState.addData === undefined) {
+                    setListingState({mode: "view-trade"});
+                    return;
+                };
+                if (listingState.addData.tradeSection === "give" || listingState.addData.tradeSection === "receive") {
+                    let existingIndex = -1;
+                    for (let i=0; i<listing[listingState.addData.tradeSection].items.length; i++) {
+                        if (listing[listingState.addData.tradeSection].items[i].name === item.name) {
+                            existingIndex = i;
+                            break
+                        }
+                    }
+                    if (existingIndex >= 0 && listing[listingState.addData.tradeSection].items[existingIndex]) {
+                        listing[listingState.addData.tradeSection].items[existingIndex].count = (listing[listingState.addData.tradeSection].items[existingIndex].count || 1) + (item.count || 0);
+                    }
+                    else {
+                        listing[listingState.addData.tradeSection].items.push(item);
+                    }
+                }
+                else {
+                    setListingState({mode: "view-trade"});
+                    return;
+                }
+                setListing(listing);
+                setListingState({mode: "view-trade"});
+            }} />
         );
     }
     return (
@@ -58,7 +128,7 @@ function TradeAddListing() {
                     {Translate("market_trade_add")}
                 </Button>
             </Group>
-            <Modal title={Translate("market_trade_add")} opened={true} close={close}>
+            <Modal title={Translate("market_trade_add")} opened={opened} close={close}>
                 <Group p={10} gap={10} style={{flexDirection: "column", alignItems: "center"}} bg={"dark.7"}>
                     {children}
                 </Group>
@@ -103,7 +173,7 @@ function TradeListingDisplay({listing, addListing} : {listing: TradeListing, add
                         </Box>
                     )}
                     {
-                        listing.give.items.map((item, itemIndex) => (
+                        listing.receive.items.map((item, itemIndex) => (
                             <ItemDisplay imageSize="50%" style={{width: 75}} listing={{...item, listingType: "trade"}} key={itemIndex}/>
                         ))
                     }

@@ -2,7 +2,7 @@ import { AspectRatio, Box, Button, Container, Group, NumberInput, rem, ScrollAre
 import { useContext, useEffect, useState } from "react";
 import { GetPriceString, Item, Translate } from "../../App";
 import { IconEdit, IconPlus, IconSearch, IconShoppingCartPlus, IconTrash, IconX } from "@tabler/icons-react";
-import { HasPermission, GetMaxCount, MarketDataContext } from "../Market";
+import { HasPermission, GetMaxCount, MarketDataContext, GetItemLabel } from "../Market";
 import classes from "./Buy.module.css";
 import { Modal } from "../modal/Modal";
 import { useDisclosure } from "@mantine/hooks";
@@ -79,10 +79,10 @@ function ItemDisplayInfo({listing, openEdit, openDelete, imageSize} : {listing: 
                         <IconEdit onClick={openEdit} style={{cursor: "pointer"}} size={15} color={"white"} />
                         <IconTrash onClick={openDelete} style={{cursor: "pointer"}} size={15} color={"white"} />
                     </Group> : null }
-                    <Text fz={10} style={{textAlign: "right"}}>x{listing.count}</Text>
+                    {(listing.count && listing.count > 0) && <Text fz={10} style={{textAlign: "right"}}>x{listing.count}</Text>}
                 </Group>
                 <Group grow w={"100%"} style={{backgroundColor: "rgba(0, 0, 0, 0.25)"}}> 
-                    <Text pl={4} pr={4} fz={10} style={{ textOverflow: "ellipsis", textWrap:"nowrap", overflow: "hidden", textAlign: "center"}}>{listing.name}</Text>
+                    <Text pl={4} pr={4} fz={10} style={{ textOverflow: "ellipsis", textWrap:"nowrap", overflow: "hidden", textAlign: "center"}}>{GetItemLabel(listing)}</Text>
                 </Group>
             </Group>
         </Group>

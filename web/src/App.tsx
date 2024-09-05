@@ -13,6 +13,7 @@ export type Currency = {
 export type Item = {
   sku?: string;
   name: string;
+  label?: string;
   price?: number;
   count?: number;
   quantity?: number;
@@ -20,6 +21,7 @@ export type Item = {
   slot?: number;
   durability?: number;
   metadata?: any;
+  isCurrency?: boolean;
   listingType?: string; // "inventory" | "server" | "market" | "market-view" | "trade" 
 }
 

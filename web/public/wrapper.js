@@ -32,6 +32,13 @@ function SendConfig() {
             market_trade_add: "Add Listing",
             market_trade_manage: "Edit Listing",
             market_trade_delete: "Delete Listing",
+            market_trade_select_give: "Select the item you want to offer:",
+            market_trade_select_receive: "Select the item you want to demand:",
+            market_trade_add_give: "Add Offer",
+            market_trade_add_receive: "Add Demand",
+            market_cash: "Cash",
+            market_card: "Card",
+            market_dirtycash: "Dirty Money",
         },
     }, '*');
 }
@@ -201,7 +208,14 @@ function OpenMenu() {
                 {sku: "500508C", name: "Item 8", price: 800, count: 80, metadata: {}},
                 {sku: "500509C", name: "Item 9", price: 900, count: 90, metadata: {}},
                 {sku: "500510C", name: "Item 10", price: 1000, count: 100, metadata: {}},
-            ]
+            ],
+            items: [
+                {name: "orange", label: "Orange"},
+                {name: "apple", label: "Apple"},
+                {name: "banana", label: "Banana"},
+                {name: "grape", label: "Grape"},
+            ],
+            allowedItems: ["orange", "apple", "banana"],
         }
     }, '*');
 }

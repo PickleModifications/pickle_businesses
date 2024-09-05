@@ -10,6 +10,24 @@ import { Manage } from "./manage/Manage";
 import { Translate, Item } from "../App";
 import { useNuiEvent } from "../nui/useNui";
 
+export const CURRENCY_ITEMS = [
+  {
+    label_locale: "market_cash",
+    name: "cash",
+    image: `assets/images/cash.png`,
+  },
+  {
+    label_locale: "market_card",
+    name: "card",
+    image: `assets/images/card.png`,
+  },
+  {
+    label_locale: "market_dirtycash",
+    name: "dirtycash",
+    image: `assets/images/dirtycash.png`,
+  },
+]
+
 type Link = {
     active?: boolean;
     link: string;
@@ -21,10 +39,11 @@ export type MarketData = {
   listings?: Item[],
   trades?: TradeListing[],
   inventory?: Item[],
+  items: Item[],
+  allowedItems?: string[],
+  allowedCurrencies?: string[],
   cart?: Item[]
 }
-
-let marketData: MarketData = {};
 
 interface MarketDataContextType {
   marketData: MarketData;
@@ -55,6 +74,52 @@ export function GetMaxCount(item: Item) {
     }
   }
   return {count: count, itemIndexes: items};
+}
+
+export function IsItemAllowed(item: Item) {
+  const context = useContext(MarketDataContext);
+  if (!context) { 
+    return false;
+  }
+  const { marketData } = context;
+  if (item.isCurrency) {
+    if (!marketData || !marketData.allowedCurrencies || marketData.allowedCurrencies.length == 0) {
+      return true;
+    }
+    return marketData.allowedCurrencies.includes(item.name);
+  }
+  else {
+    if (!marketData || !marketData.allowedItems || marketData.allowedItems.length == 0) {
+      return true;
+    }
+    return marketData.allowedItems.includes(item.name);
+  }
+}
+
+export function GetItemLabel(item: Item) {
+  let invalidLabel = "NBL: " + item.name;
+  const context = useContext(MarketDataContext);
+  if (!context) { 
+    return invalidLabel;
+  }
+  const { marketData } = context;
+  if (item.isCurrency) {
+    for (let i=0; i<CURRENCY_ITEMS.length; i++) {
+      if (CURRENCY_ITEMS[i].name == item.name) {
+        return Translate(CURRENCY_ITEMS[i].label_locale);
+      }
+    }
+    return invalidLabel;
+  }
+  if (!marketData || !marketData.items || marketData.items.length == 0) {
+    return invalidLabel;
+  }
+  for (let i=0; i<marketData.items.length; i++) {
+    if (marketData.items[i].name == item.name) {
+      return marketData.items[i].label;
+    }
+  }
+  return invalidLabel;
 }
 
 function HeaderMenu({title, setPage, links} : {setPage: (pageId: string) => void, title: string, links: Link[]}) {
@@ -124,7 +189,7 @@ export function HasPermission(permission: string) {
 
 export function Market() {
   const [page, setPage] = useState("trade");
-  const [marketData, setMarketData] = useState<MarketData>({listings: [], trades: [], inventory: []});
+  const [marketData, setMarketData] = useState<MarketData>({listings: [], trades: [], inventory: [], items: []});
   const [opened, setOpened] = useState(false);
   useNuiEvent("openMarket", (data: any) => {
     setMarketData(data.marketData);
