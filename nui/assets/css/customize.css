@@ -1,0 +1,407 @@
+#app-customize {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    --custom-color-1: rgba(0, 0, 0, 0.8);
+    --custom-color-2: rgba(56, 56, 56, 0.8);
+    --custom-color-3: rgba(78, 78, 78, 0.8);
+    --custom-color-4: rgba(0, 0, 0, 1);
+    --custom-color-5: rgba(56, 56, 56, 1);
+    --custom-color-6: rgba(78, 78, 78, 1);
+}
+
+#app-customize > .customize-container {
+    display: flex;
+    flex-direction: column;
+}
+
+/*header*/
+
+#app-customize > .customize-container > .header {
+    display: flex;
+    width: calc(100% - 6vw);
+    height: 5vw;
+    margin: 1vw 1vw;
+    background-color: var(--custom-color-1);
+    align-items: center;
+    padding: 0vw 2vw;
+    column-gap: 2vw;
+}
+
+#app-customize > .customize-container > .header > div {
+    position: relative;
+    cursor: pointer;
+}
+
+#app-customize > .customize-container > .header > div.active {
+    font-weight: bold;
+}
+
+#app-customize > .customize-container > .header > div.active > div:nth-child(2) {
+    position: absolute;
+    width: 100%;
+    height: 0.05vw;
+    background-color: white;
+    margin-top: 0.25vw;
+}
+
+/*sidebar*/
+
+#app-customize > .customize-container > .sidebar {
+    display: none;
+    margin: 0vw 1vw;
+    width: calc(20vw - 2vw);
+    max-height: calc(30vw - 2vw);
+    padding: 1vw;
+    background-color: var(--custom-color-1);
+    overflow-y: auto
+}
+
+
+/* width */
+#app-customize ::-webkit-scrollbar {
+    width: 0.5vw;
+}
+  
+  /* Track */
+#app-customize ::-webkit-scrollbar-track {
+    background: transparent;
+}
+  
+  /* Handle */
+#app-customize ::-webkit-scrollbar-thumb {
+    background: var(--custom-color-5);
+}
+  
+  /* Handle on hover */
+#app-customize ::-webkit-scrollbar-thumb:hover {
+    background: var(--custom-color-6);
+}
+
+/*LOCATIONS*/
+
+
+#app-customize > .customize-container > .sidebar.locations {
+    flex-direction: column;
+    row-gap: 0.5vw;
+}
+
+#app-customize > .customize-container > .sidebar.locations > .add-location {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: calc(100% - 2vw);
+    height: calc(4vw - 2vw);
+    background-color: var(--custom-color-1);
+    padding: 1vw;
+    column-gap: 1vw;
+    cursor: pointer;
+}
+
+#app-customize > .customize-container > .sidebar.locations > .location-entry {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: calc(100% - 2vw);
+    background-color: var(--custom-color-1);
+    padding: 1vw;
+    row-gap: 0.25vw;
+}
+
+#app-customize > .customize-container > .sidebar.locations > .location-entry .location-name {
+    font-weight: bold;
+}
+
+#app-customize > .customize-container > .sidebar.locations > .location-entry .location-id {
+    font-weight: lighter;
+    font-size: 0.85vw;
+}
+
+#app-customize > .customize-container > .sidebar.locations > .location-entry .location-options {
+    position: absolute;
+    top: 50%;
+    right: 1vw;
+    display: flex;
+    column-gap: 0.5vw;
+    font-size: 0.85vw;
+    transform: translateY(-50%);
+    cursor: pointer;
+}
+
+
+#app-customize > .customize-container > .sidebar.create-location {
+    flex-direction: column;
+    row-gap: 0.5vw;
+}
+
+#app-customize > .customize-container > .sidebar.create-location > .return-locations {
+    display: flex;
+    align-items: center;
+    column-gap: 0.5vw;
+}
+
+#app-customize > .customize-container > .sidebar.create-location > .location {
+    display: flex;
+    flex-direction: column;
+    row-gap: 0.25vw;
+}
+
+#app-customize > .customize-container > .sidebar.create-location > .location .location-name {
+    font-weight: bold;
+}
+
+#app-customize > .customize-container > .sidebar.create-location > .location .location-id {
+    font-weight: lighter;
+    font-size: 0.85vw;
+}
+
+#app-customize > .customize-container > .sidebar.create-location > .location .location-options {
+    display: flex;
+    flex-direction: column;
+    row-gap: 0.5vw;
+}
+
+#app-customize > .customize-container > .sidebar.create-location > .location .location-options > div {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+#app-customize > .customize-container > .sidebar.create-location > .location .location-options > div .option-name {
+    font-weight: bold;
+    font-size: 0.85vw;
+}
+
+#app-customize > .customize-container > .sidebar.create-location > .location .location-options > div .option-value {
+    margin-left: auto;
+    font-weight: lighter;
+    font-size: 0.65vw;
+}
+
+#app-customize > .customize-container > .sidebar.create-location > .location .location-options > div .option-edit {
+    margin-left: 0.5vw;
+    cursor: pointer;
+}
+
+#app-customize > .customize-container > .sidebar.create-location > .location .save-location {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 0.5vw;
+    width: calc(100% - 2vw);
+    height: 0.5vw;
+    background-color: var(--success2);
+    padding: 1vw;
+    column-gap: 1vw;
+    cursor: pointer;
+}
+
+#app-customize > .customize-container > .sidebar.create-location > .location .save-location:hover {
+    background-color: var(--success1);
+}
+
+#app-customize > .customize-container > .sidebar.create-location .return-locations {
+    cursor: pointer;
+}
+
+#app-customize > .customize-container > .sidebar.edit-location {
+    flex-direction: column;
+    row-gap: 0.5vw;
+}
+
+#app-customize > .customize-container > .sidebar.edit-location > .return-locations {
+    display: flex;
+    align-items: center;
+    column-gap: 0.5vw;
+}
+
+#app-customize > .customize-container > .sidebar.edit-location > .location {
+    display: flex;
+    flex-direction: column;
+    row-gap: 0.25vw;
+}
+
+#app-customize > .customize-container > .sidebar.edit-location > .location .location-name {
+    font-weight: bold;
+}
+
+#app-customize > .customize-container > .sidebar.edit-location > .location .location-id {
+    font-weight: lighter;
+    font-size: 0.85vw;
+}
+
+#app-customize > .customize-container > .sidebar.edit-location > .location .location-options {
+    display: flex;
+    flex-direction: column;
+    row-gap: 0.5vw;
+}
+
+#app-customize > .customize-container > .sidebar.edit-location > .location .location-options > div {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+#app-customize > .customize-container > .sidebar.edit-location > .location .location-options > div .option-name {
+    font-weight: bold;
+    font-size: 0.85vw;
+}
+
+#app-customize > .customize-container > .sidebar.edit-location > .location .location-options > div .option-value {
+    margin-left: auto;
+    font-weight: lighter;
+    font-size: 0.65vw;
+}
+
+#app-customize > .customize-container > .sidebar.edit-location > .location .location-options > div .option-edit {
+    margin-left: 0.5vw;
+    cursor: pointer;
+}
+
+#app-customize > .customize-container > .sidebar.edit-location > .location .save-location {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 0.5vw;
+    width: calc(100% - 2vw);
+    height: 0.5vw;
+    background-color: var(--success2);
+    padding: 1vw;
+    column-gap: 1vw;
+    cursor: pointer;
+}
+
+#app-customize > .customize-container > .sidebar.edit-location > .location .save-location:hover {
+    background-color: var(--success1);
+}
+
+#app-customize > .customize-container > .sidebar.edit-location .return-locations {
+    cursor: pointer;
+}
+
+/* Furniture */
+
+#app-customize > .customize-container > .sidebar.furnitureLocations {
+    flex-direction: column;
+    row-gap: 0.5vw;
+}
+
+#app-customize > .customize-container > .sidebar.furnitureLocations > .add-location {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: calc(100% - 2vw);
+    height: calc(4vw - 2vw);
+    background-color: var(--custom-color-1);
+    padding: 1vw;
+    column-gap: 1vw;
+    cursor: pointer;
+}
+
+#app-customize > .customize-container > .sidebar.furnitureLocations > .location-entry {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: calc(100% - 2vw);
+    background-color: var(--custom-color-1);
+    padding: 1vw;
+    row-gap: 0.25vw;
+}
+
+#app-customize > .customize-container > .sidebar.furnitureLocations > .location-entry .location-name {
+    font-weight: bold;
+}
+
+#app-customize > .customize-container > .sidebar.furnitureLocations > .location-entry .location-id {
+    font-weight: lighter;
+    font-size: 0.85vw;
+}
+
+#app-customize > .customize-container > .sidebar.furnitureLocations > .location-entry .location-options {
+    position: absolute;
+    top: 50%;
+    right: 1vw;
+    display: flex;
+    column-gap: 0.5vw;
+    font-size: 0.85vw;
+    transform: translateY(-50%);
+    cursor: pointer;
+}
+
+#app-customize > .customize-container > .sidebar.edit-furniture {
+    flex-direction: column;
+    row-gap: 0.5vw;
+}
+
+#app-customize > .customize-container > .sidebar.edit-furniture > .return-furnitureLocations {
+    display: flex;
+    align-items: center;
+    column-gap: 0.5vw;
+}
+
+#app-customize > .customize-container > .sidebar.edit-furniture > .location {
+    display: flex;
+    flex-direction: column;
+    row-gap: 0.25vw;
+}
+
+#app-customize > .customize-container > .sidebar.edit-furniture > .location .location-name {
+    font-weight: bold;
+}
+
+#app-customize > .customize-container > .sidebar.edit-furniture > .location .location-id {
+    font-weight: lighter;
+    font-size: 0.85vw;
+}
+
+#app-customize > .customize-container > .sidebar.edit-furniture > .location .location-options {
+    display: flex;
+    flex-direction: column;
+    row-gap: 0.5vw;
+}
+
+#app-customize > .customize-container > .sidebar.edit-furniture > .location .location-options > div {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+#app-customize > .customize-container > .sidebar.edit-furniture > .location .location-options > div .option-name {
+    font-weight: bold;
+    font-size: 0.85vw;
+}
+
+#app-customize > .customize-container > .sidebar.edit-furniture > .location .location-options > div .option-value {
+    margin-left: auto;
+    font-weight: lighter;
+    font-size: 0.65vw;
+}
+
+#app-customize > .customize-container > .sidebar.edit-furniture > .location .location-options > div .option-edit {
+    margin-left: 0.5vw;
+    cursor: pointer;
+}
+
+#app-customize > .customize-container > .sidebar.edit-furniture > .location .save-location {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 0.5vw;
+    width: calc(100% - 2vw);
+    height: 0.5vw;
+    background-color: var(--success2);
+    padding: 1vw;
+    column-gap: 1vw;
+    cursor: pointer;
+}
+
+#app-customize > .customize-container > .sidebar.edit-furniture > .location .save-location:hover {
+    background-color: var(--success1);
+}
+
+#app-customize > .customize-container > .sidebar.edit-furniture .return-furnitureLocations {
+    cursor: pointer;
+}
+
