@@ -2,7 +2,7 @@ fx_version "cerulean"
 game "gta5"
 author "Pickle Mods"
 description "The best player-owned business system for your server!"
-version "v1.0.1"
+version "v1.0.2"
 
 ui_page "nui/index.html"
 
